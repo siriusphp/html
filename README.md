@@ -1,8 +1,8 @@
 # Sirius HTML
 
-[![Build Status](https://travis-ci.org/siriusphp/html.png?branch=master)](https://travis-ci.org/siriusphp/html)
-[![Coverage Status](https://coveralls.io/repos/siriusphp/html/badge.png)](https://coveralls.io/r/siriusphp/html)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/siriusphp/html/badges/quality-score.png?s=9ee7779b2bf75aae6c26bd5f0b6a90a9081b2545)](https://scrutinizer-ci.com/g/siriusphp/html/)
+[![Build Status](https://scrutinizer-ci.com/g/siriusphp/html/badges/build.png?b=master)](https://scrutinizer-ci.com/g/siriusphp/html/build-status/master)
+[![Code Coverage](https://scrutinizer-ci.com/g/siriusphp/html/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/siriusphp/html/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/siriusphp/html/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/siriusphp/html/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/siriusphp/html/v/stable.png)](https://packagist.org/packages/siriusphp/html)
 [![License](https://poser.pugx.org/siriusphp/html/license.png)](https://packagist.org/packages/siriusphp/html)
 
@@ -16,28 +16,34 @@ Framework agnostic HTML rendering utility with an API inspired by jQuery and Rea
 $h = new Sirius\Html\Builder;
 // at this point the builder knows only about the HTML tags of the library
 // but you can add custom elements (classes or callbacks)
-$h->addElement('user-login', 'MyApp\Html\Tag\UserLogin');
-$h->addElement('app-footer', $someFunctionThatCreatesTags);
+$h->registerTag('user-login', 'MyApp\Html\Tag\UserLogin');
+$h->registerTag('app-footer', $someFunctionThatCreatesTags);
 
 // each element can have attributes, content and optional data
 $attrs = ['id' => 'some-id', 'class' => 'some classes here'];
 
 // the content can be a string, an array or an object that has __toString()
 $content = 'This is a paragraph';
+echo $h->make('div', $attrs, $content);
+
+// the content can be an array (of strings or other stringifiable objects)
 $content = [
 	'This is a simple text',
 	$h->make('div', null, 'This is a DIV'),
 ];
+echo $h->make('p', $attrs, $content);
 
 // the $data contains arbitrary values required for rendering
-// in the case of a SELECT tag the $data may be something like
+// in the case of a SELECT tag the $data will be something like
 $data = [
 	'first_option' => 'Select from list',
-	'options' => ['Option 1', 'Option 2', 'Option 3'],
-	'value' => 'Option 3'
+	'options' => ['Option 1', 'Option 2', 'Option 3']
 ];
-
+// for FORM elements the $content is the value
+$content = 'Option 2';
 $select = $h->make('select', $attrs, $content, $data);
+
+
 // you can alter the tag using a jQuery-like API
 $select->toggleClass('some-class');
 $select->setAttribute('name' => 'selected_option');
@@ -45,17 +51,20 @@ $select->setValue('Option 2');
 
 echo $select;
 
-// custom elements
-echo $h->make('user-login');
+// custom elements (most likely the custom elements rely only on $data)
+echo $h->make('user-login', null, null, $someData);
 
 // create HTML tags using the power of __call()
-$h->h1(null, 'Heading 1');
-$h->article(['class' => 'post'], [
-	$h->header([], [
-		$h->h3([], 'Post title')
+echo $h->h1(null, 'Heading 1');
+echo $h->article(['class' => 'post'], [
+	$h->header(null, [
+		$h->h3(null, 'Post title')
 	]),
-	$h->aside([], null);
+	$h->aside(null, 'Aside content');
 ]);
+
+// self-closing tags are like this
+echo $h->make('hr/', ['class' => 'separator'])
 
 ```
 
@@ -102,8 +111,8 @@ For form elements. They are aliases for `getData('value')` and `setData('value',
 ##### `getContent()` | `setContent($content)`
 $content can be a string or an array (associative or not)
 
-#### `before($stringOrObject)` | `after($stringOrObject)`
+##### `before($stringOrObject)` | `after($stringOrObject)`
 To insert something before or after the tag
 
-#### `wrap($before, $after)`
+##### `wrap($before, $after)`
 So you don't have to call `before` and `after`

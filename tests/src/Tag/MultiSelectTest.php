@@ -8,11 +8,10 @@ class MultiSelectTest extends \PHPUnit_Framework_TestCase
     {
         $this->input = new MultiSelect(array(
             'name' => 'answer'
-        ), null, array(
-            'value' => array(
-                'yes',
-                'no'
-            ),
+        ), array(
+            'yes',
+            'no'
+        ), array(
             'first_option' => '--select--',
             'options' => array(
                 'yes' => 'Yes',

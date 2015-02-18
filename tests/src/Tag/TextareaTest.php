@@ -1,8 +1,6 @@
 <?php
 namespace Sirius\Html\Tag;
 
-use Sirius\Html\TagTextarea;
-
 class TextareaTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -11,9 +9,7 @@ class TextareaTest extends \PHPUnit_Framework_TestCase
         $this->input = new Textarea(array(
             'name' => 'comment',
             'cols' => '30'
-        ), null, array(
-            'value' => 'Sirius Forms rocks!'
-        ));
+        ), 'Sirius Forms rocks!');
     }
 
     function testRender()

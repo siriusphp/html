@@ -1,8 +1,6 @@
 <?php
 namespace Sirius\Html\Tag;
 
-use Sirius\Html\TagText;
-
 class TextTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -12,9 +10,7 @@ class TextTest extends \PHPUnit_Framework_TestCase
             'name' => 'username',
             'disabled' => true,
             'class' => 'not-valid'
-        ), null, array(
-            'value' => 'siriusforms'
-        ));
+        ), 'siriusforms');
     }
 
     function testAttributes()

@@ -1,8 +1,6 @@
 <?php
 namespace Sirius\Html\Tag;
 
-use Sirius\Html\TagFile;
-
 class FileTest extends \PHPUnit_Framework_TestCase
 {
 

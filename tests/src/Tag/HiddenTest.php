@@ -1,8 +1,6 @@
 <?php
 namespace Sirius\Html\Tag;
 
-use Sirius\Html\TagHidden;
-
 class HiddenTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -10,9 +8,7 @@ class HiddenTest extends \PHPUnit_Framework_TestCase
     {
         $this->input = new Hidden(array(
             'name' => 'token',
-        ), null, array(
-        	'value' => '123'
-        ));
+        ), '123');
     }
 
     function testRender()

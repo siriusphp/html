@@ -1,16 +1,31 @@
 <?php
-namespace Sirius\Html\Tag;
+namespace Sirius\Html;
 
 /**
- * Base class for building HTML elements
+ * Extended class for building HTML elements.
  *
- * - attr(): set/get the element's attributes
- * - text(): set/get the element's innerHTML
- * - addClass(), removeClass(), toggleClass(): manipulate the element's classes
- * - data(): set/get miscelaneous data to the element
+ * It offers an interface similar to jQuery's DOM handling functionality
+ * (besides the Input's class functionality)
+ * - before(): add something before the element
+ * - after(): add something after the element;
  */
-class BaseTag
+class Tag
 {
+
+    /**
+     * Items (strings) to be added before the element
+     *
+     * @var array
+     */
+    protected $before = array();
+
+    /**
+     * Items (strings) to be added after the element
+     *
+     * @var array
+     */
+    protected $after = array();
+
     /**
      * The HTML tag
      *
@@ -40,11 +55,19 @@ class BaseTag
     protected $data = array();
 
     /**
+     * Content of the element.
+     * Can be a string, array, object that has __toString()
+     *
+     * @var mixed
+     */
+    protected $content;
+
+    /**
      * Factory method.
      * If $tag ends in '/' the tag will be considered 'self-closing'
      *
-     * @example BaseTag::factory('hr/', ['class' => 'separator']);
-     *          BaseTag::factory('div', ['class' => 'container'], 'This is my content');
+     * @example ExtendedTag::factory('hr/', ['class' => 'separator']);
+     *          ExtendedTag::factory('div', ['class' => 'container'], 'This is my content');
      *         
      * @param string $tag            
      * @param array $attr            
@@ -52,7 +75,7 @@ class BaseTag
      * @param array $data            
      * @return \Sirius\Html\Tag\Tag
      */
-    static function create($tag, $attr = array(), $content = null, $data = array())
+    static function create($tag, $attr = null, $content = null, $data = null)
     {
         $widget = new static($attr, $content, $data);
         if (substr($tag, - 1) === '/') {
@@ -66,14 +89,6 @@ class BaseTag
     }
 
     /**
-     * Content of the element.
-     * Can be a string, array, object that has __toString()
-     *
-     * @var mixed
-     */
-    protected $content;
-
-    /**
      *
      * @param array $attrs
      *            Attributes of the HTML tag
@@ -82,7 +97,7 @@ class BaseTag
      * @param array $data
      *            Additional data for the HTML element
      */
-    function __construct($attrs = array(), $content = null, $data = array())
+    function __construct($attrs = null, $content = null, $data = null)
     {
         if ($attrs) {
             $this->setAttributes($attrs);
@@ -329,7 +344,9 @@ class BaseTag
             $template = "<{$this->tag}%s>%s</{$this->tag}>";
             $element = sprintf($template, $this->getAttributesString(), $this->getInnerHtml());
         }
-        return $element;
+        $before = implode(PHP_EOL, $this->before);
+        $after = implode(PHP_EOL, $this->after);
+        return $before . $element . $after;
     }
 
     protected function getInnerHtml()
@@ -344,4 +361,43 @@ class BaseTag
     {
         return $this->render();
     }
+
+    /**
+     * Add a string or a stringifiable object immediately before the element
+     *
+     * @param string|object $stringOrObject
+     * @return \Sirius\FormsRenderer\Renderer\Widget\Base
+     */
+    function before($stringOrObject)
+    {
+        array_unshift($this->before, $stringOrObject);
+        return $this;
+    }
+
+    /**
+     * Add a string or a stringifiable object immediately after the element
+     *
+     * @param string|object $stringOrObject
+     * @return \Sirius\FormsRenderer\Renderer\Widget\Base
+     */
+    function after($stringOrObject)
+    {
+        array_push($this->after, $stringOrObject);
+        return $this;
+    }
+
+    /**
+     * Add something before and after the element.
+     * Proxy for calling before() and after() simoultaneously
+     *
+     * @param string|object $before
+     * @param string|object $after
+     * @return \Sirius\FormsRenderer\Renderer\Widget\Base
+     */
+    function wrap($before, $after)
+    {
+        return $this->before($before)->after($after);
+    }
+
 }
+

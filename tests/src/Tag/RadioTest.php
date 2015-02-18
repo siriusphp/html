@@ -1,8 +1,6 @@
 <?php
 namespace Sirius\Html\Tag;
 
-use Sirius\Html\TagRadio;
-
 class RadioTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -11,9 +9,7 @@ class RadioTest extends \PHPUnit_Framework_TestCase
         $this->input = new Radio(array(
             'name' => 'gender',
             'value' => 'male'
-        ), null, array(
-            'value' => 'male'
-        ));
+        ), 'male');
     }
 
     function testRender()

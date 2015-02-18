@@ -1,29 +1,25 @@
 <?php
 namespace Sirius\Html\Tag;
 
+use Sirius\Html\Tag;
+
 /**
  * Base class for input elements.
  * Besides a regular HTML element input elements have a name and a value.
  *
  * @see \Sirius\FormsRenderer\Renderer\Widget\Base
  */
-class Input extends ExtendedTag
+class Input extends Tag
 {
 
     protected $tag = 'input';
 
     protected $isSelfClosing = true;
 
-    /**
-     * Value of the input field
-     *
-     * @var mixed
-     */
-    protected $value;
-
-    function __construct($attr = array(), $content = null, $data = array())
+    function __construct($attr = null, $content = null, $data = null)
     {
         parent::__construct($attr, $content, $data);
+        $this->setValue($content);
     }
 
     /**

@@ -1,7 +1,9 @@
 <?php
 namespace Sirius\Html\Tag;
 
-class Label extends ExtendedTag
+use Sirius\Html\Tag;
+
+class Label extends Tag
 {
 
     protected $tag = 'label';

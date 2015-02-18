@@ -1,7 +1,9 @@
 <?php
 namespace Sirius\Html\Tag;
 
-class Button extends ExtendedTag
+use Sirius\Html\Tag;
+
+class Button extends Tag
 {
 
     protected $tag = 'button';

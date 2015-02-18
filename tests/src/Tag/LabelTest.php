@@ -1,8 +1,6 @@
 <?php
 namespace Sirius\Html\Tag;
 
-use Sirius\Html\TagLabel;
-
 class LabelTest extends \PHPUnit_Framework_TestCase
 {
 

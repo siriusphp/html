@@ -1,8 +1,6 @@
 <?php
 namespace Sirius\Html\Tag;
 
-use Sirius\Html\TagSelect;
-
 class SelectTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -11,8 +9,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         $this->input = new Select(array(
             'name' => 'answer',
             'class' => 'dropdown'
-        ), null, array(
-            'value' => 'maybe',
+        ), 'maybe', array(
             'first_option' => '--select--',
             'options' => array(
                 'yes' => 'Yes',
