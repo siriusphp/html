@@ -30,7 +30,7 @@ class Select extends Input
         return $options;
     }
 
-    function render()
+    public function render()
     {
         $this->setContent($this->getOptionsString());
         return parent::render();

@@ -31,7 +31,7 @@ class MultiSelect extends Select
         return $options;
     }
 
-    function render()
+    public function render()
     {
         $name = $this->getAttribute('name');
         if (substr($name, - 2) !== '[]') {

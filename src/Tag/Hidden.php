@@ -4,7 +4,7 @@ namespace Sirius\Html\Tag;
 class Hidden extends Input
 {
 
-    function render()
+    public function render()
     {
         $this->setAttribute('type', 'hidden');
         $this->setAttribute('value', $this->getValue());

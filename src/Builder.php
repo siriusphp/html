@@ -28,7 +28,7 @@ class Builder
      * @param mixed $classOrCallback            
      * @return self
      */
-    function registerTag($name, $classOrCallback)
+    public function registerTag($name, $classOrCallback)
     {
         $this->tags[$name] = $classOrCallback;
         return $this;
@@ -44,7 +44,7 @@ class Builder
      * @throws \InvalidArgumentException
      * @return Tag
      */
-    function make($name, $attrs = null, $content = null, $data = null)
+    public function make($name, $attrs = null, $content = null, $data = null)
     {
         if (! isset($this->tags[$name])) {
             return Tag::create($name, $attrs, $content, $data);
@@ -72,7 +72,7 @@ class Builder
      * @param array $args            
      * @return Tag
      */
-    function __call($method, $args)
+    public function __call($method, $args)
     {
         $method = preg_replace('/([A-Z]+)/', '-\1', $method);
         $method = strtolower($method);

@@ -8,7 +8,7 @@ class Password extends Text
 
     protected $isSelfClosing = true;
 
-    function render()
+    public function render()
     {
         $this->setValue(null); // ensure the value is not displayed
         $this->setAttribute('type', 'password');

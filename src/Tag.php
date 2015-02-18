@@ -97,15 +97,15 @@ class Tag
      * @param array $data
      *            Additional data for the HTML element
      */
-    function __construct($attrs = null, $content = null, $data = null)
+    public function __construct($attrs = null, $content = null, $data = null)
     {
-        if ($attrs) {
+        if ($attrs !== null) {
             $this->setAttributes($attrs);
         }
-        if ($content) {
+        if ($content !== null) {
             $this->setContent($content);
         }
-        if ($data) {
+        if ($data !== null) {
             $this->setData($data);
         }
     }
@@ -117,7 +117,7 @@ class Tag
      *            $attrs
      * @return self
      */
-    function setAttributes($attrs)
+    public function setAttributes($attrs)
     {
         foreach ($attrs as $name => $value) {
             $this->setAttribute($name, $value);
@@ -132,7 +132,7 @@ class Tag
      * @param mixed $value            
      * @return Tag
      */
-    function setAttribute($name, $value = null)
+    public function setAttribute($name, $value = null)
     {
         if (is_string($name)) {
             if ($value === null && isset($this->attrs[$name])) {
@@ -150,7 +150,7 @@ class Tag
      * @param array|null $list            
      * @return array
      */
-    function getAttributes($list = null)
+    public function getAttributes($list = null)
     {
         if ($list && is_array($list)) {
             $result = array();
@@ -168,7 +168,7 @@ class Tag
      * @param string $name
      * @return mixed
      */
-    function getAttribute($name)
+    public function getAttribute($name)
     {
         return isset($this->attrs[$name]) ? $this->attrs[$name] : null;
     }
@@ -179,7 +179,7 @@ class Tag
      * @param string $class            
      * @return self
      */
-    function addClass($class)
+    public function addClass($class)
     {
         if (! $this->hasClass($class)) {
             $this->setAttribute('class', trim((string) $this->getAttribute('class') . ' ' . $class));
@@ -193,7 +193,7 @@ class Tag
      * @param string $class            
      * @return self
      */
-    function removeClass($class)
+    public function removeClass($class)
     {
         $classes = $this->getAttribute('class');
         if ($classes) {
@@ -209,7 +209,7 @@ class Tag
      * @param string $class            
      * @return self
      */
-    function toggleClass($class)
+    public function toggleClass($class)
     {
         if ($this->hasClass($class)) {
             return $this->removeClass($class);
@@ -223,7 +223,7 @@ class Tag
      * @param string $class            
      * @return boolean
      */
-    function hasClass($class)
+    public function hasClass($class)
     {
         $classes = $this->getAttribute('class');
         return $classes && ((bool) preg_match('/(^| ){1}' . $class . '( |$){1}/i', $classes));
@@ -232,11 +232,10 @@ class Tag
     /**
      * Set the content
      *
-     * @param
-     *            $content
+     * @param mixed $content
      * @return $this
      */
-    function setContent($content)
+    public function setContent($content)
     {
         $this->content = $content;
         return $this;
@@ -247,7 +246,7 @@ class Tag
      *
      * @return mixed
      */
-    function getContent()
+    public function getContent()
     {
         return $this->content;
     }
@@ -258,7 +257,7 @@ class Tag
      * @param string|array|null $name            
      * @return array
      */
-    function getData($name = null)
+    public function getData($name = null)
     {
         if (is_string($name)) {
             if (isset($this->data[$name])) {
@@ -287,7 +286,7 @@ class Tag
      * @param mixed $value            
      * @return $this
      */
-    function setData($name = null, $value = null)
+    public function setData($name = null, $value = null)
     {
         if (is_array($name)) {
             foreach ($name as $k => $v) {
@@ -333,7 +332,7 @@ class Tag
      *
      * @return string
      */
-    function render()
+    public function render()
     {
         if ($this->isSelfClosing) {
             $template = "<{$this->tag}%s>";
@@ -355,7 +354,7 @@ class Tag
         return (string) $this->content;
     }
 
-    function __toString()
+    public function __toString()
     {
         return $this->render();
     }
@@ -366,7 +365,7 @@ class Tag
      * @param string|object $stringOrObject            
      * @return Tag
      */
-    function before($stringOrObject)
+    public function before($stringOrObject)
     {
         array_unshift($this->before, $stringOrObject);
         return $this;
@@ -378,7 +377,7 @@ class Tag
      * @param string|object $stringOrObject            
      * @return Tag
      */
-    function after($stringOrObject)
+    public function after($stringOrObject)
     {
         array_push($this->after, $stringOrObject);
         return $this;
@@ -392,7 +391,7 @@ class Tag
      * @param string|object $after            
      * @return Tag
      */
-    function wrap($before, $after)
+    public function wrap($before, $after)
     {
         return $this->before($before)->after($after);
     }

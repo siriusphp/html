@@ -8,7 +8,7 @@ class Textarea extends Input
 
     protected $isSelfClosing = false;
 
-    function render()
+    public function render()
     {
         $this->setContent($this->getValue());
         return parent::render();

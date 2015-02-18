@@ -4,7 +4,7 @@ namespace Sirius\Html\Tag;
 class Checkbox extends Input
 {
 
-    function render()
+    public function render()
     {
         $checked = null;
         if (is_array($this->getValue()) && in_array($this->getAttribute('value'), $this->getValue())) {
