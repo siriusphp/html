@@ -166,9 +166,8 @@ class Tag
     /**
      * Returns one of HTML element's attributes
      *
-     * @param
-     *            $name
-     * @return null
+     * @param string $name
+     * @return mixed
      */
     function getAttribute($name)
     {
