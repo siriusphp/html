@@ -22,8 +22,7 @@ class DivTest extends \PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->element = new Div(array(
-        ), 'Lorem ipsum...');
+        $this->element = new Div(array(), 'Lorem ipsum...');
     }
 
     function testAttributeIsSet()
@@ -188,11 +187,12 @@ class DivTest extends \PHPUnit_Framework_TestCase
             'class' => 'separator'
         )));
     }
-    
-    function testFactory() {
+
+    function testFactory()
+    {
         $hr = Tag::create('hr/');
         $this->assertEquals('<hr>', $hr->render());
-
+        
         $h1 = Tag::create('h1', null, 'Title content');
         $this->assertEquals('<h1>Title content</h1>', $h1->render());
     }

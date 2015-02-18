@@ -9,5 +9,4 @@ class Button extends Tag
     protected $tag = 'button';
 
     protected $isSelfClosing = false;
-
 }

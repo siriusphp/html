@@ -10,7 +10,7 @@ class Password extends Text
 
     function render()
     {
-        $this->setValue(null); //ensure the value is not displayed
+        $this->setValue(null); // ensure the value is not displayed
         $this->setAttribute('type', 'password');
         return parent::render();
     }

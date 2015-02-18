@@ -9,8 +9,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $this->input = new File(array(
             'name' => 'picture',
             'class' => 'upload'
-        )
-        );
+        ));
     }
 
     function testRender()

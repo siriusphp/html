@@ -34,7 +34,7 @@ class MultiSelect extends Select
     function render()
     {
         $name = $this->getAttribute('name');
-        if (substr($name, -2) !== '[]') {
+        if (substr($name, - 2) !== '[]') {
             $this->setAttribute('name', $name . '[]');
         }
         return parent::render();

@@ -25,7 +25,7 @@ class Input extends Tag
     /**
      * Set value of the input element
      *
-     * @param string $val
+     * @param string $val            
      * @return self
      */
     function setValue($val)

@@ -32,14 +32,14 @@ class Tag
      * @var string
      */
     protected $tag = 'div';
-    
+
     /**
      * Is the element self enclosing
      *
      * @var bool
      */
     protected $isSelfClosing = false;
-    
+
     /**
      * Attributes collection
      *
@@ -73,7 +73,7 @@ class Tag
      * @param array $attr            
      * @param mixed $content            
      * @param array $data            
-     * @return \Sirius\Html\Tag\Tag
+     * @return Tag
      */
     static function create($tag, $attr = null, $content = null, $data = null)
     {
@@ -131,7 +131,7 @@ class Tag
      * @param
      *            $name
      * @param null $value            
-     * @return $this
+     * @return Tag
      */
     function setAttribute($name, $value = null)
     {
@@ -257,7 +257,7 @@ class Tag
     /**
      * Get one, more or all of the additional data attached to the HTML element
      *
-     * @param null $name            
+     * @param string|array|null $name            
      * @return array
      */
     function getData($name = null)
@@ -285,8 +285,8 @@ class Tag
     /**
      * Set one or more data items on the HTML element
      *
-     * @param null $name            
-     * @param null $value            
+     * @param string|array $name            
+     * @param mixed $value            
      * @return $this
      */
     function setData($name = null, $value = null)
@@ -365,8 +365,8 @@ class Tag
     /**
      * Add a string or a stringifiable object immediately before the element
      *
-     * @param string|object $stringOrObject
-     * @return \Sirius\FormsRenderer\Renderer\Widget\Base
+     * @param string|object $stringOrObject            
+     * @return Tag
      */
     function before($stringOrObject)
     {
@@ -377,8 +377,8 @@ class Tag
     /**
      * Add a string or a stringifiable object immediately after the element
      *
-     * @param string|object $stringOrObject
-     * @return \Sirius\FormsRenderer\Renderer\Widget\Base
+     * @param string|object $stringOrObject            
+     * @return Tag
      */
     function after($stringOrObject)
     {
@@ -390,14 +390,13 @@ class Tag
      * Add something before and after the element.
      * Proxy for calling before() and after() simoultaneously
      *
-     * @param string|object $before
-     * @param string|object $after
-     * @return \Sirius\FormsRenderer\Renderer\Widget\Base
+     * @param string|object $before            
+     * @param string|object $after            
+     * @return Tag
      */
     function wrap($before, $after)
     {
         return $this->before($before)->after($after);
     }
-
 }
 
