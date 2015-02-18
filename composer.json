@@ -1,0 +1,30 @@
+{
+    "name": "siriusphp/html",
+    "description": "HTML rendering library with an API inspired by jQuery and React",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "html",
+        "view",
+        "render",
+        "ui"
+    ],
+    "authors": [
+        {
+            "name": "Adrian Miu",
+            "email": "adrian@adrianmiu.ro"
+        }
+    ],
+    "require": {
+        "php": ">=5.3"
+    },
+    "require-dev": {
+    	"phpunit/phpunit": "3.7",
+        "satooshi/php-coveralls": "dev-master"
+    },
+    "autoload": {
+        "files": [
+            "autoload.php"
+        ]
+    }
+}
