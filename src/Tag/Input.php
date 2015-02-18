@@ -24,9 +24,6 @@ class Input extends ExtendedTag
     function __construct($attr = array(), $content = null, $data = array())
     {
         parent::__construct($attr, $content, $data);
-        if (isset($data['value'])) {
-            $this->setValue($data['value']);
-        }
     }
 
     /**
@@ -37,8 +34,7 @@ class Input extends ExtendedTag
      */
     function setValue($val)
     {
-        $this->value = $val;
-        return $this;
+        $this->setData('value', $val);
     }
 
     /**
@@ -48,6 +44,6 @@ class Input extends ExtendedTag
      */
     function getValue()
     {
-        return $this->value;
+        return $this->getData('value');
     }
 }
