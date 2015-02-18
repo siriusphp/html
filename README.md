@@ -1,5 +1,12 @@
 # Sirius HTML
 
+[![Build Status](https://travis-ci.org/siriusphp/html.png?branch=master)](https://travis-ci.org/siriusphp/html)
+[![Coverage Status](https://coveralls.io/repos/siriusphp/html/badge.png)](https://coveralls.io/r/siriusphp/html)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/siriusphp/html/badges/quality-score.png?s=9ee7779b2bf75aae6c26bd5f0b6a90a9081b2545)](https://scrutinizer-ci.com/g/siriusphp/html/)
+[![Latest Stable Version](https://poser.pugx.org/siriusphp/html/v/stable.png)](https://packagist.org/packages/siriusphp/html)
+[![License](https://poser.pugx.org/siriusphp/html/license.png)](https://packagist.org/packages/siriusphp/html)
+
+
 Framework agnostic HTML rendering utility with an API inspired by jQuery and React.
 
 ## Create HTML elements using the builder
