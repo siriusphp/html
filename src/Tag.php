@@ -128,9 +128,8 @@ class Tag
     /**
      * Set a single attribute to the HTML element
      *
-     * @param
-     *            $name
-     * @param null $value            
+     * @param string $name
+     * @param mixed $value            
      * @return Tag
      */
     function setAttribute($name, $value = null)
@@ -148,7 +147,7 @@ class Tag
     /**
      * Returns some or all of the HTML element's attributes
      *
-     * @param null|array $list            
+     * @param array|null $list            
      * @return array
      */
     function getAttributes($list = null)
