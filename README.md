@@ -109,7 +109,7 @@ $list = the keys of the data array to be retrieved (null = ALL attributes)
 For form elements. They are aliases for `getData('value')` and `setData('value', $value)`
 
 ##### `getContent()` | `setContent($content)`
-$content can be a string or an array (associative or not)
+$content can be a string or an array (associative or not). `getContent` returns an instance of the `TagContainer` class (extends `ArrayObject`) which has usefull methods like `append` and `prepend`
 
 ##### `before($stringOrObject)` | `after($stringOrObject)`
 To insert something before or after the tag

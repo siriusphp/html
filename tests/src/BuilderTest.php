@@ -8,9 +8,9 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     {
         $this->builder = new Builder();
         
-        $this->builder->registerTag('some-tag', function ($attr = null, $content = null, $data = null)
+        $this->builder->registerTag('some-tag', function ($attr = null, $content = null, $data = null, $builder)
         {
-            return Tag::create('other-tag', $attr, $content, $data);
+            return Tag::create('other-tag', $attr, $content, $data, $builder);
         });
     }
 
@@ -39,11 +39,54 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
             'class' => 'separator'
         )));
     }
-
+    
     function testExceptionThrownForInvalidFactories()
-    {
+    { 
         $this->setExpectedException('InvalidArgumentException');
-        $this->builder->registerTag('exception', new \stdClass());
+        $this->builder->registerTag('exception', function() {
+        	return '';
+        });
         $this->builder->make('exception');
+    }   
+
+    function testComplexScenario()
+    {
+        $html = $this->builder->make('form', [
+            'id' => 'user-add',
+            'class' => 'form-horizontal'
+        ], [
+            [
+                'div',
+                [
+                    'class' => 'form-control'
+                ],
+                [
+                    [
+                        'label',
+                        [],
+                        'Username'
+                    ],
+                    [
+                        'input',
+                        [
+                            'type' => 'text'
+                        ],
+                        'my_username'
+                    ],
+                    [
+                        'div',
+                        [
+                            'class' => 'form-help'
+                        ],
+                        'Enter your desired username'
+                    ]
+                ]
+            ]
+            
+        ]);
+        $renderedHtml = $html->render();
+        $this->assertTrue(strpos($renderedHtml, '<div class="form-help">') !== false);
+        $this->assertTrue(strpos($renderedHtml, '<label>Username') !== false);
+        $this->assertTrue(strpos($renderedHtml, '<input type="text">') !== false);
     }
 }

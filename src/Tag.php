@@ -48,7 +48,7 @@ class Tag
     protected $attrs = array();
 
     /**
-     * Data attached to the element (think jQuery)
+     * Data attached to the element (think jQuery.data() )
      *
      * @var array
      */
@@ -61,6 +61,21 @@ class Tag
      * @var mixed
      */
     protected $content;
+    
+    /**
+     * Parent element
+     *
+     * @var Tag
+     */
+    protected $parent;
+    
+    /**
+     * The tag builder. 
+     * This is so we can attach children without having to construct them
+     * 
+     * @var Builder
+     */
+    protected $builder;
 
     /**
      * Factory method.
@@ -75,9 +90,9 @@ class Tag
      * @param array $data            
      * @return Tag
      */
-    static function create($tag, $attr = null, $content = null, $data = null)
+    static function create($tag, $attr = null, $content = null, $data = null, Builder $builder = null)
     {
-        $widget = new static($attr, $content, $data);
+        $widget = new static($attr, null, $data, $builder);
         if (substr($tag, - 1) === '/') {
             $widget->tag = substr($tag, 0, - 1);
             $widget->isSelfClosing = true;
@@ -85,6 +100,7 @@ class Tag
             $widget->tag = $tag;
             $widget->isSelfClosing = false;
         }
+        $widget->setContent($content);
         return $widget;
     }
 
@@ -97,8 +113,9 @@ class Tag
      * @param array $data
      *            Additional data for the HTML element
      */
-    public function __construct($attrs = null, $content = null, $data = null)
+    public function __construct($attrs = null, $content = null, $data = null, Builder $builder = null)
     {
+        $this->builder = $builder;
         if ($attrs !== null) {
             $this->setAttributes($attrs);
         }
@@ -109,7 +126,7 @@ class Tag
             $this->setData($data);
         }
     }
-
+    
     /**
      * Set multipe attributes to the HTML element
      *
@@ -135,6 +152,7 @@ class Tag
     public function setAttribute($name, $value = null)
     {
         if (is_string($name)) {
+            $name = $this->cleanAttributeName($name);
             if ($value === null && isset($this->attrs[$name])) {
                 unset($this->attrs[$name]);
             } elseif ($value !== null) {
@@ -142,6 +160,10 @@ class Tag
             }
         }
         return $this;
+    }
+    
+    protected function cleanAttributeName($name) {
+        return preg_replace('/[^a-zA-Z0-9-]+/', '', $name);
     }
 
     /**
@@ -197,7 +219,7 @@ class Tag
     {
         $classes = $this->getAttribute('class');
         if ($classes) {
-            $classes = preg_replace('/(^| ){1}' . $class . '( |$){1}/i', ' ', $classes);
+            $classes = trim(preg_replace('/(^| ){1}' . $class . '( |$){1}/i', ' ', $classes));
             $this->setAttribute('class', $classes);
         }
         return $this;
@@ -237,18 +259,72 @@ class Tag
      */
     public function setContent($content)
     {
-        $this->content = $content;
+        if (!$content) {
+            return $this;
+        }
+        if (!is_array($content)) {
+            $content = array($content);
+        }
+        $this->clearContent();
+        foreach ($content as $child) {
+            $this->addChild($child);
+        }
         return $this;
     }
 
     /**
      * Get the content/children
      *
-     * @return mixed
+     * @return \Sirius\Html\TagContainer
      */
     public function getContent()
     {
+        $this->ensureContent();
         return $this->content;
+    }
+    
+    /**
+     * Empties the content of the tag
+     * 
+     * @return \Sirius\Html\Tag
+     */
+    function clearContent() {
+        $this->content = new TagContainer();
+        return $this;
+    }
+    
+    /**
+     * Make sure the content of the element is a TagContainer
+     */
+    protected function ensureContent() {
+        if (!$this->content) {
+            $this->content = new TagContainer();
+        }
+    }
+    
+    protected function addChild($tagTextOrArray) {
+        // a text node
+        if (is_string($tagTextOrArray)) {
+            return $this->content->append($tagTextOrArray);            
+        }
+        
+        // an already constructed tag
+        if ($tagTextOrArray instanceof Tag) {
+            return $this->content->append($tagTextOrArray);
+        }
+        
+        if (!isset($this->builder)) {
+            throw new \InvalidArgumentException(sprintf('Builder not attached to tag `%s`', $this->tag));
+        }
+        
+        if (is_array($tagTextOrArray) && !empty($tagTextOrArray)) {
+            $tagName = $tagTextOrArray[0];
+            $attrs = isset($tagTextOrArray[1]) ? $tagTextOrArray[1] : [];
+            $content = isset($tagTextOrArray[2]) ? $tagTextOrArray[2] : [];
+            $data = isset($tagTextOrArray[3]) ? $tagTextOrArray[3] : [];            
+            $tag = $this->builder->make($tagName, $attrs, $content, $data, $this->builder);
+            return $this->content->append($tag);
+        }
     }
 
     /**
@@ -348,9 +424,6 @@ class Tag
 
     protected function getInnerHtml()
     {
-        if (is_array($this->content)) {
-            return implode(PHP_EOL, $this->content);
-        }
         return (string) $this->content;
     }
 

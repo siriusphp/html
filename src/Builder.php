@@ -4,7 +4,7 @@ namespace Sirius\Html;
 class Builder
 {
 
-    protected $tags = array(
+    protected $tagFactories = array(
         'button' => 'Sirius\Html\Tag\Button',
         'checkbox' => 'Sirius\Html\Tag\Checkbox',
         'div' => 'Sirius\Html\Tag\Div',
@@ -30,36 +30,41 @@ class Builder
      */
     public function registerTag($name, $classOrCallback)
     {
-        $this->tags[$name] = $classOrCallback;
+        $this->tagFactories[$name] = $classOrCallback;
         return $this;
     }
 
     /**
      * Make an HTML tag with a specific tag name (div, p, section etc)
      *
-     * @param string $name            
+     * @param string $tag            
      * @param mixed $attrs            
      * @param mixed $content            
      * @param mixed $data            
      * @throws \InvalidArgumentException
      * @return Tag
      */
-    public function make($name, $attrs = null, $content = null, $data = null)
+    public function make($tag, $attrs = null, $content = null, $data = null)
     {
-        if (! isset($this->tags[$name])) {
-            return Tag::create($name, $attrs, $content, $data);
+        if (! isset($this->tagFactories[$tag])) {
+            return Tag::create($tag, $attrs, $content, $data, $this);
         }
         
-        $constructor = $this->tags[$name];
+        $constructor = $this->tagFactories[$tag];
+        
         if (is_callable($constructor)) {
-            return call_user_func($constructor, $attrs, $content, $data);
+            /* @var $tag Tag */
+            $tag = call_user_func($constructor, $attrs, $content, $data, $this);
+        } elseif (is_string($constructor) && class_exists($constructor)) {
+            /* @var $tag Tag */
+            $tag = new $constructor($attrs, $content, $data, $this);
         }
         
-        if (is_string($constructor) && class_exists($constructor)) {
-            return new $constructor($attrs, $content, $data);
+        if (!$tag || !$tag instanceof Tag) {
+            throw  new \InvalidArgumentException(sprintf('The constructor for the `%s` tag did not generate a Tag object', $tag));
         }
+        return $tag;        
         
-        throw new \InvalidArgumentException(sprintf('Invalid constructor for the `%s` tag', $name));
     }
 
     /**

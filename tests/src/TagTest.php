@@ -70,6 +70,13 @@ class DivTest extends \PHPUnit_Framework_TestCase
             'name' => 'email'
         ), $this->element->getAttributes());
     }
+    
+    function testAttributeNameIsCleaned() {
+        $this->element->setAttribute('@name#', 'name');
+        $this->assertEquals(array(
+        	'name' => 'name'
+        ), $this->element->getAttributes());
+    }
 
     function testAddClass()
     {
@@ -105,7 +112,7 @@ class DivTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->element->hasClass('active'));
     }
 
-    function testTextIsSet()
+    function testPreviousContentIsOverwritten()
     {
         $this->element->setContent('cool');
         $this->assertEquals('cool', $this->element->getContent());

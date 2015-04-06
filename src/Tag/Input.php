@@ -18,7 +18,7 @@ class Input extends Tag
 
     public function __construct($attr = null, $content = null, $data = null)
     {
-        parent::__construct($attr, $content, $data);
+        parent::__construct($attr, null, $data);
         $this->setValue($content);
     }
 
