@@ -60,7 +60,7 @@ class Tag
      *
      * @var mixed
      */
-    protected $content;
+    protected $content = array();
     
     /**
      * Parent element
@@ -279,7 +279,6 @@ class Tag
      */
     public function getContent()
     {
-        $this->ensureContent();
         return $this->content;
     }
     
@@ -289,28 +288,19 @@ class Tag
      * @return \Sirius\Html\Tag
      */
     function clearContent() {
-        $this->content = new TagContainer();
+        $this->content = array();
         return $this;
-    }
-    
-    /**
-     * Make sure the content of the element is a TagContainer
-     */
-    protected function ensureContent() {
-        if (!$this->content) {
-            $this->content = new TagContainer();
-        }
     }
     
     protected function addChild($tagTextOrArray) {
         // a text node
         if (is_string($tagTextOrArray)) {
-            return $this->content->append($tagTextOrArray);            
+            return array_push($this->content, $tagTextOrArray);            
         }
         
         // an already constructed tag
         if ($tagTextOrArray instanceof Tag) {
-            return $this->content->append($tagTextOrArray);
+            return array_push($this->content, $tagTextOrArray);
         }
         
         if (!isset($this->builder)) {
@@ -323,7 +313,7 @@ class Tag
             $content = isset($tagTextOrArray[2]) ? $tagTextOrArray[2] : [];
             $data = isset($tagTextOrArray[3]) ? $tagTextOrArray[3] : [];            
             $tag = $this->builder->make($tagName, $attrs, $content, $data, $this->builder);
-            return $this->content->append($tag);
+            return array_push($this->content, $tag);
         }
     }
 
@@ -422,9 +412,14 @@ class Tag
         return $before . $element . $after;
     }
 
-    protected function getInnerHtml()
+    /**
+     * Return the innerHTML content of the tag
+     * 
+     * @return string
+     */
+    public function getInnerHtml()
     {
-        return (string) $this->content;
+        return implode(PHP_EOL, $this->content);
     }
 
     public function __toString()
@@ -453,6 +448,30 @@ class Tag
     public function after($stringOrObject)
     {
         array_push($this->after, $stringOrObject);
+        return $this;
+    }
+
+    /**
+     * Add a string or a stringifiable object immediately as the first child of the element
+     *
+     * @param string|object $stringOrObject            
+     * @return Tag
+     */
+    public function prepend($stringOrObject)
+    {
+        array_unshift($this->content, $stringOrObject);
+        return $this;
+    }
+
+    /**
+     * Add a string or a stringifiable object as the last child the element
+     *
+     * @param string|object $stringOrObject            
+     * @return Tag
+     */
+    public function append($stringOrObject)
+    {
+        array_push($this->content, $stringOrObject);
         return $this;
     }
 

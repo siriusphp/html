@@ -115,7 +115,7 @@ class DivTest extends \PHPUnit_Framework_TestCase
     function testPreviousContentIsOverwritten()
     {
         $this->element->setContent('cool');
-        $this->assertEquals('cool', $this->element->getContent());
+        $this->assertEquals('cool', $this->element->getInnerHtml());
     }
 
     function testDataIsSet()
@@ -187,7 +187,21 @@ class DivTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(strpos($this->element->render(), '<div class="wrapper"><div class="container">Lorem ipsum...</div>') !== false);
         $this->assertTrue(strpos($this->element->render(), '</div><i class="icon-date"></i>') !== false);
     }
+    
+    function testAppend() {
+        $this->element->clearContent();
+        $this->element->append('<article>Article</article>');
+        $this->element->append('<aside>Aside</aside>');
+        $this->assertTrue(strpos($this->element->getInnerHtml(), '<article') < strpos($this->element->getInnerHtml(), '<aside'));
+    }
 
+    function testPrepend() {
+        $this->element->clearContent();
+        $this->element->prepend('<article>Article</article>');
+        $this->element->prepend('<aside>Aside</aside>');
+        $this->assertTrue(strpos($this->element->getInnerHtml(), '<article') > strpos($this->element->getInnerHtml(), '<aside'));
+    }
+    
     function testSelfClosingTag()
     {
         $this->assertEquals('<hr class="separator">', new Hr(array(

@@ -14,24 +14,28 @@ Framework agnostic HTML rendering utility with an API inspired by jQuery and Rea
 ```php
 
 $h = new Sirius\Html\Builder;
+
 // at this point the builder knows only about the HTML tags of the library
 // but you can add custom elements (classes or callbacks)
 $h->registerTag('user-login', 'MyApp\Html\Tag\UserLogin');
 $h->registerTag('app-footer', $someFunctionThatCreatesTags);
 
-// each element can have attributes, content and optional data
+// the API is like this
+// echo $h->make($tagName, $attributes, $content, $data)
+
+// the attributes are rendered in HTML tag without any filtering
+// so be carefull what you put here
 $attrs = ['id' => 'some-id', 'class' => 'some classes here'];
 
-// the content can be a string, an array or an object that has __toString()
-$content = 'This is a paragraph';
-echo $h->make('div', $attrs, $content);
-
-// the content can be an array (of strings or other stringifiable objects)
-$content = [
-	'This is a simple text',
-	$h->make('div', null, 'This is a DIV'),
-];
-echo $h->make('p', $attrs, $content);
+// add content to your HTML
+echo $h->make('p', $attrs, [
+	//  a string
+	'This is a simple paragraph text',
+	// or another HTML element
+	$h->make('div', null, 'A DIV inside A Paragraph? No way!'),
+	// or the stuff required to make another element
+	['strong', [], 'this HTML library is bold']
+]);
 
 // the $data contains arbitrary values required for rendering
 // in the case of a SELECT tag the $data will be something like
@@ -63,12 +67,42 @@ echo $h->article(['class' => 'post'], [
 	$h->aside(null, 'Aside content');
 ]);
 
-// self-closing tags are like this
+// self-closing tags are like this (so no __call() for you in this case)
 echo $h->make('hr/', ['class' => 'separator'])
 
 ```
 
+The end goal of the library is composition so you can write your HTML like so
+
+```php
+
+echo $h->make('blog-article', [], [], ['entry' => $someBlogPost]);
+
+// which would be equivalent of 
+
+echo $h->make(
+	'article', 
+	['class' => 'post post-123 post-story'],
+	[
+		['heading', [], $post->post_name],
+		['section', [], $post->content],
+		['footer', [], 'Written by ' . $post->author],
+		['aside', [], [
+			['h3', [], 'Similar articles'],
+			['ul', [], [
+				// ... you can guess what happens here 
+			]]
+		]]
+	]
+);
+```
+
+
+
+
 ## Create HTML elements from classes
+
+Obviously you can be very verbose if you like... to annoy other people.
 
 ```php
 
@@ -95,6 +129,8 @@ echo new Sirius\Html\Tag\Div(
 
 ## Tag API
 
+Once you get access to a `Tag` object you can do stuff with it:
+
 ##### `getAttributes($list)` | `setAttributes($attrs)`
 $list = the names of the attributes to be retrieved (null = ALL attributes)
 
@@ -109,10 +145,13 @@ $list = the keys of the data array to be retrieved (null = ALL attributes)
 For form elements. They are aliases for `getData('value')` and `setData('value', $value)`
 
 ##### `getContent()` | `setContent($content)`
-$content can be a string or an array (associative or not). `getContent` returns an instance of the `TagContainer` class (extends `ArrayObject`) which has usefull methods like `append` and `prepend`
+$content can be a string or an array. `getContent` returns an array that you can play with
+
+##### `append($stringOrObject)` | `prepend($stringOrObject)`
+To add something inside the tag at the beginning (`prepend`) or at the end (`append`)
 
 ##### `before($stringOrObject)` | `after($stringOrObject)`
-To insert something before or after the tag
+To add something before or after the tag
 
 ##### `wrap($before, $after)`
 So you don't have to call `before` and `after`
