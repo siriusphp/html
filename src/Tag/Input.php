@@ -16,9 +16,9 @@ class Input extends Tag
 
     protected $isSelfClosing = true;
 
-    public function __construct($attr = null, $content = null, $data = null)
+    public function __construct($content = null, $props = null)
     {
-        parent::__construct($attr, null, $data);
+        parent::__construct(null, $props);
         $this->setValue($content);
     }
 
@@ -30,7 +30,7 @@ class Input extends Tag
      */
     public function setValue($val)
     {
-        $this->setData('value', $val);
+        $this->set('_value', $val);
     }
 
     /**
@@ -40,6 +40,6 @@ class Input extends Tag
      */
     public function getValue()
     {
-        return $this->getData('value');
+        return $this->get('_value');
     }
 }

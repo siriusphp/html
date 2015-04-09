@@ -7,13 +7,13 @@ class Checkbox extends Input
     public function render()
     {
         $checked = null;
-        if (is_array($this->getValue()) && in_array($this->getAttribute('value'), $this->getValue())) {
+        if (is_array($this->getValue()) && in_array($this->get('value'), $this->getValue())) {
             $checked = 'checked';
-        } elseif ($this->getAttribute('value') == $this->getValue()) {
+        } elseif ($this->get('value') == $this->getValue()) {
             $checked = 'checked';
         }
-        $this->setAttribute('checked', $checked);
-        $this->setAttribute('type', 'checkbox');
+        $this->set('checked', $checked);
+        $this->set('type', 'checkbox');
         return parent::render();
     }
 }

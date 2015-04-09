@@ -10,7 +10,7 @@ class Text extends Input
 
     public function render()
     {
-        $this->setAttribute('value', $this->getValue());
+        $this->set('value', $this->getValue());
         return parent::render();
     }
 }

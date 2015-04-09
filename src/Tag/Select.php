@@ -17,10 +17,11 @@ class Select extends Input
     {
         $value = $this->getValue();
         $options = '';
-        if ($this->getData('first_option')) {
-            $options .= sprintf('<option value="">%s</option>', $this->getData('first_option'));
+        if ($this->get('_first_option')) {
+            $options .= sprintf('<option value="">%s</option>', $this->get('_first_option'));
         }
-        foreach ($this->getData('options') as $k => $v) {
+        $optionsList = $this->get('_options') ?: array();
+        foreach ($optionsList as $k => $v) {
             $selected = '';
             if ((is_string($value) && $k == $value) || (is_array($value) && in_array($k, $value))) {
                 $selected = 'selected="selected"';

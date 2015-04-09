@@ -38,26 +38,25 @@ class Builder
      * Make an HTML tag with a specific tag name (div, p, section etc)
      *
      * @param string $tag            
-     * @param mixed $attrs            
      * @param mixed $content            
-     * @param mixed $data            
+     * @param mixed $props
      * @throws \InvalidArgumentException
      * @return Tag
      */
-    public function make($tag, $attrs = null, $content = null, $data = null)
+    public function make($tag, $content = null, $props = null)
     {
         if (! isset($this->tagFactories[$tag])) {
-            return Tag::create($tag, $attrs, $content, $data, $this);
+            return Tag::create($tag, $content, $props, $this);
         }
         
         $constructor = $this->tagFactories[$tag];
         
         if (is_callable($constructor)) {
             /* @var $tag Tag */
-            $tag = call_user_func($constructor, $attrs, $content, $data, $this);
+            $tag = call_user_func($constructor, $content, $props, $this);
         } elseif (is_string($constructor) && class_exists($constructor)) {
             /* @var $tag Tag */
-            $tag = new $constructor($attrs, $content, $data, $this);
+            $tag = new $constructor($content, $props, $this);
         }
         
         if (!$tag || !$tag instanceof Tag) {

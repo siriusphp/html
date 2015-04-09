@@ -17,10 +17,11 @@ class MultiSelect extends Select
     {
         $value = $this->getValue();
         $options = '';
-        if ($this->getData('first_option')) {
-            $options .= sprintf('<option value="">%s</option>', $this->getData('first_option'));
+        if ($this->get('_first_option')) {
+            $options .= sprintf('<option value="">%s</option>', $this->get('_first_option'));
         }
-        foreach ($this->getData('options') as $k => $v) {
+        $optionsList = $this->get('_options') ?: array();
+        foreach ($optionsList as $k => $v) {
             $selected = '';
             // be flexible, accept a non-array value
             if ((is_string($value) && $k == $value) || (is_array($value) && in_array($k, $value))) {
@@ -33,9 +34,9 @@ class MultiSelect extends Select
 
     public function render()
     {
-        $name = $this->getAttribute('name');
+        $name = $this->get('name');
         if (substr($name, - 2) !== '[]') {
-            $this->setAttribute('name', $name . '[]');
+            $this->set('name', $name . '[]');
         }
         return parent::render();
     }

@@ -41,18 +41,11 @@ class Tag
     protected $isSelfClosing = false;
 
     /**
-     * Attributes collection
+     * Properties collection
      *
      * @var array
      */
-    protected $attrs = array();
-
-    /**
-     * Data attached to the element (think jQuery.data() )
-     *
-     * @var array
-     */
-    protected $data = array();
+    protected $props = array();
 
     /**
      * Content of the element.
@@ -81,18 +74,17 @@ class Tag
      * Factory method.
      * If $tag ends in '/' the tag will be considered 'self-closing'
      *
-     * @example ExtendedTag::factory('hr/', ['class' => 'separator']);
-     *          ExtendedTag::factory('div', ['class' => 'container'], 'This is my content');
+     * @example ExtendedTag::factory('hr/', null, ['class' => 'separator']);
+     *          ExtendedTag::factory('div', 'This is my content', ['class' => 'container']);
      *         
      * @param string $tag            
-     * @param array $attr            
      * @param mixed $content            
-     * @param array $data            
+     * @param array $props
      * @return Tag
      */
-    static function create($tag, $attr = null, $content = null, $data = null, Builder $builder = null)
+    static function create($tag, $content = null, $props = null, Builder $builder = null)
     {
-        $widget = new static($attr, null, $data, $builder);
+        $widget = new static(null, $props, $builder);
         if (substr($tag, - 1) === '/') {
             $widget->tag = substr($tag, 0, - 1);
             $widget->isSelfClosing = true;
@@ -106,93 +98,94 @@ class Tag
 
     /**
      *
-     * @param array $attrs
-     *            Attributes of the HTML tag
-     * @param string $content
+     * @param mixed $content
      *            Content of the HTML element (a string, an array)
-     * @param array $data
+     * @param array $props
      *            Additional data for the HTML element
      */
-    public function __construct($attrs = null, $content = null, $data = null, Builder $builder = null)
+    public function __construct($content = null, $props = null, Builder $builder = null)
     {
         $this->builder = $builder;
-        if ($attrs !== null) {
-            $this->setAttributes($attrs);
+        if ($props !== null) {
+            $this->setProps($props);
         }
         if ($content !== null) {
             $this->setContent($content);
         }
-        if ($data !== null) {
-            $this->setData($data);
-        }
     }
     
     /**
-     * Set multipe attributes to the HTML element
+     * Set multipe properties to the HTML element
      *
      * @param
-     *            $attrs
+     *            $props
      * @return self
      */
-    public function setAttributes($attrs)
+    public function setProps($props)
     {
-        foreach ($attrs as $name => $value) {
-            $this->setAttribute($name, $value);
+        if (!is_array($props)) {
+            return $this;
+        }
+        foreach ($props as $name => $value) {
+            $this->set($name, $value);
         }
         return $this;
     }
 
     /**
-     * Set a single attribute to the HTML element
+     * Set a single property to the HTML element
      *
      * @param string $name
      * @param mixed $value            
      * @return Tag
      */
-    public function setAttribute($name, $value = null)
+    public function set($name, $value = null)
     {
         if (is_string($name)) {
             $name = $this->cleanAttributeName($name);
-            if ($value === null && isset($this->attrs[$name])) {
-                unset($this->attrs[$name]);
+            if ($value === null && isset($this->props[$name])) {
+                unset($this->props[$name]);
             } elseif ($value !== null) {
-                $this->attrs[$name] = $value;
+                $this->props[$name] = $value;
             }
         }
         return $this;
     }
     
     protected function cleanAttributeName($name) {
+        if (substr($name, 0, 1) === '_') {
+            return $name;
+        }
         return preg_replace('/[^a-zA-Z0-9-]+/', '', $name);
     }
 
     /**
-     * Returns some or all of the HTML element's attributes
+     * Returns some or all of the HTML element's properties
      *
      * @param array|null $list            
      * @return array
      */
-    public function getAttributes($list = null)
+    public function getProps($list = null)
     {
         if ($list && is_array($list)) {
             $result = array();
             foreach ($list as $key) {
-                $result[$key] = $this->getAttribute($key);
+                $result[$key] = $this->get($key);
             }
             return $result;
         }
-        return $this->attrs;
+        return $this->props;
     }
 
     /**
-     * Returns one of HTML element's attributes
+     * Returns one of HTML element's properties
      *
      * @param string $name
      * @return mixed
      */
-    public function getAttribute($name)
+    public function get($name)
     {
-        return isset($this->attrs[$name]) ? $this->attrs[$name] : null;
+        return isset($this->props[$name]) ? $this->props[$name] : null;
     }
 
     /**
@@ -204,7 +197,7 @@ class Tag
     public function addClass($class)
     {
         if (! $this->hasClass($class)) {
-            $this->setAttribute('class', trim((string) $this->getAttribute('class') . ' ' . $class));
+            $this->set('class', trim((string) $this->get('class') . ' ' . $class));
         }
         return $this;
     }
@@ -217,10 +210,10 @@ class Tag
      */
     public function removeClass($class)
     {
-        $classes = $this->getAttribute('class');
+        $classes = $this->get('class');
         if ($classes) {
             $classes = trim(preg_replace('/(^| ){1}' . $class . '( |$){1}/i', ' ', $classes));
-            $this->setAttribute('class', $classes);
+            $this->set('class', $classes);
         }
         return $this;
     }
@@ -247,7 +240,7 @@ class Tag
      */
     public function hasClass($class)
     {
-        $classes = $this->getAttribute('class');
+        $classes = $this->get('class');
         return $classes && ((bool) preg_match('/(^| ){1}' . $class . '( |$){1}/i', $classes));
     }
 
@@ -309,63 +302,12 @@ class Tag
         
         if (is_array($tagTextOrArray) && !empty($tagTextOrArray)) {
             $tagName = $tagTextOrArray[0];
-            $attrs = isset($tagTextOrArray[1]) ? $tagTextOrArray[1] : [];
+            $props = isset($tagTextOrArray[1]) ? $tagTextOrArray[1] : [];
             $content = isset($tagTextOrArray[2]) ? $tagTextOrArray[2] : [];
             $data = isset($tagTextOrArray[3]) ? $tagTextOrArray[3] : [];            
-            $tag = $this->builder->make($tagName, $attrs, $content, $data, $this->builder);
+            $tag = $this->builder->make($tagName, $props, $content, $data, $this->builder);
             return array_push($this->content, $tag);
         }
-    }
-
-    /**
-     * Get one, more or all of the additional data attached to the HTML element
-     *
-     * @param string|array|null $name            
-     * @return array
-     */
-    public function getData($name = null)
-    {
-        if (is_string($name)) {
-            if (isset($this->data[$name])) {
-                return $this->data[$name];
-            } else {
-                return null;
-            }
-        } elseif (is_array($name)) {
-            $data = array();
-            foreach ($name as $k) {
-                if (isset($this->data[$k])) {
-                    $data[$k] = $this->data[$k];
-                } else {
-                    $data[$k] = null;
-                }
-            }
-            return $data;
-        }
-        return $this->data;
-    }
-
-    /**
-     * Set one or more data items on the HTML element
-     *
-     * @param string|array $name            
-     * @param mixed $value            
-     * @return $this
-     */
-    public function setData($name = null, $value = null)
-    {
-        if (is_array($name)) {
-            foreach ($name as $k => $v) {
-                $this->data[$k] = $v;
-            }
-        } elseif (is_string($name)) {
-            if ($value === null && isset($this->data[$name])) {
-                unset($this->data[$name]);
-            } elseif ($value !== null) {
-                $this->data[$name] = $value;
-            }
-        }
-        return $this;
     }
 
     /**
@@ -377,20 +319,23 @@ class Tag
     protected function getAttributesString()
     {
         $result = array();
-        $attrs = $this->getAttributes();
-        ksort($attrs);
-        foreach ($attrs as $k => $v) {
+        $props = $this->getProps();
+        ksort($props);
+        foreach ($props as $k => $v) {
+            if (substr($k, 0, 1) === '_') {
+                continue;
+            }
             if ($v !== true && is_string($v)) {
                 $result[] = $k . '="' . htmlspecialchars((string) $v, ENT_COMPAT) . '"';
             } elseif ($v === true) {
                 $result[] = $k;
             }
         }
-        $attrs = implode(' ', $result);
-        if ($attrs) {
-            $attrs = ' ' . $attrs;
+        $props = implode(' ', $result);
+        if ($props) {
+            $props = ' ' . $props;
         }
-        return $attrs;
+        return $props;
     }
 
     /**

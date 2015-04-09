@@ -6,12 +6,11 @@ class SelectTest extends \PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->input = new Select(array(
+        $this->input = new Select('maybe', array(
             'name' => 'answer',
-            'class' => 'dropdown'
-        ), 'maybe', array(
-            'first_option' => '--select--',
-            'options' => array(
+            'class' => 'dropdown',
+            '_first_option' => '--select--',
+            '_options' => array(
                 'yes' => 'Yes',
                 'no' => 'No',
                 'maybe' => 'Maybe'

@@ -6,10 +6,10 @@ class CheckboxTest extends \PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->input = new Checkbox(array(
+        $this->input = new Checkbox('yes', array(
             'name' => 'agree_to_terms',
             'value' => 'yes'
-        ), 'yes');
+        ));
     }
 
     function testRender()

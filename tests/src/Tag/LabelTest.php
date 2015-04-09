@@ -6,9 +6,9 @@ class LabelTest extends \PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->input = new Label(array(
+        $this->input = new Label('Email', array(
             'for' => 'email'
-        ), 'Email');
+        ));
     }
 
     function testRender()

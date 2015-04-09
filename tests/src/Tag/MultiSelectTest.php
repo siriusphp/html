@@ -7,13 +7,12 @@ class MultiSelectTest extends \PHPUnit_Framework_TestCase
     function setUp()
     {
         $this->input = new MultiSelect(array(
-            'name' => 'answer'
-        ), array(
             'yes',
             'no'
         ), array(
-            'first_option' => '--select--',
-            'options' => array(
+            'name' => 'answer',
+            '_first_option' => '--select--',
+            '_options' => array(
                 'yes' => 'Yes',
                 'no' => 'No',
                 'maybe' => 'Maybe'

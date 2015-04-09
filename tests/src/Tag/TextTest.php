@@ -6,17 +6,17 @@ class TextTest extends \PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->input = new Text(array(
+        $this->input = new Text('siriusforms', array(
             'name' => 'username',
             'disabled' => true,
             'class' => 'not-valid'
-        ), 'siriusforms');
+        ));
     }
 
     function testAttributes()
     {
         $this->assertEquals('siriusforms', $this->input->getValue());
-        $this->assertEquals('username', $this->input->getAttribute('name'));
+        $this->assertEquals('username', $this->input->get('name'));
         $this->assertTrue($this->input->hasClass('not-valid'));
     }
 

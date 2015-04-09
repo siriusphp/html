@@ -21,68 +21,80 @@ $h->registerTag('user-login', 'MyApp\Html\Tag\UserLogin');
 $h->registerTag('app-footer', $someFunctionThatCreatesTags);
 
 // the API is like this
-// echo $h->make($tagName, $attributes, $content, $data)
+// echo $h->make($tagName, $content, $props)
+// where $props is an array containing
+// 1. the HTML attributes and 
+// 2. other data if the key starts with _
 
-// the attributes are rendered in HTML tag without any filtering
+// the props are rendered in HTML tag if they don't start with _
 // so be carefull what you put here
-$attrs = ['id' => 'some-id', 'class' => 'some classes here'];
+$props = [
+	'id' => 'some-id', 
+	'class' => 'some classes here',
+	'_some_private_data' => 'not treated as attribute'
+];
 
 // add content to your HTML
-echo $h->make('p', $attrs, [
-	//  a string
-	'This is a simple paragraph text',
-	// or another HTML element
-	$h->make('div', null, 'A DIV inside A Paragraph? No way!'),
-	// or the stuff required to make another element
-	['strong', [], 'this HTML library is bold']
-]);
+echo $h->make('p', [
+		//  a string
+		'This is a simple paragraph text',
+		// or another HTML element
+		$h->make('div', null, 'A DIV inside A Paragraph? No way!'),
+		// or the stuff required to make another element
+		['strong', [], 'this HTML library is bold']
+	],
+	$props
+);
 
 // the $data contains arbitrary values required for rendering
 // in the case of a SELECT tag the $data will be something like
-$data = [
-	'first_option' => 'Select from list',
-	'options' => ['Option 1', 'Option 2', 'Option 3']
+$props = [
+	'name' => 'choice',
+	'_first_option' => 'Select from list',
+	'_options' => ['Option 1', 'Option 2', 'Option 3']
 ];
-// for FORM elements the $content is the value
+// for FORM elements the $content parameter is the value
 $content = 'Option 2';
-$select = $h->make('select', $attrs, $content, $data);
+$select = $h->make('select', $content, $props);
 
 
 // you can alter the tag using a jQuery-like API
 $select->toggleClass('some-class');
-$select->setAttribute('name' => 'selected_option');
+$select->set('name', 'selected_option');
 $select->setValue('Option 2');
 
 echo $select;
 
 // custom elements (most likely the custom elements rely only on $data)
-echo $h->make('user-login', null, null, $someData);
+echo $h->make('user-login', null, $someData);
 
 // create HTML tags using the power of __call()
-echo $h->h1(null, 'Heading 1');
-echo $h->article(['class' => 'post'], [
-	$h->header(null, [
-		$h->h3(null, 'Post title')
-	]),
-	$h->aside(null, 'Aside content');
-]);
+echo $h->h1('Heading 1');
+echo $h->article(
+	[
+		$h->header([
+			$h->h3('Post title')
+		]),
+		$h->aside('Aside content');
+	],
+	['class' => 'post']
+);
 
-// self-closing tags are like this (so no __call() for you in this case)
+// self-closing tags are like this 
 echo $h->make('hr/', ['class' => 'separator'])
-
+// this means __call() does not work in this case
 ```
 
 The end goal of the library is composition so you can write your HTML like so
 
 ```php
 
-echo $h->make('blog-article', [], [], ['entry' => $someBlogPost]);
+echo $h->make('blog-article', [], ['_entry' => $someBlogPost]);
 
 // which would be equivalent of 
 
 echo $h->make(
 	'article', 
-	['class' => 'post post-123 post-story'],
 	[
 		['heading', [], $post->post_name],
 		['section', [], $post->content],
@@ -93,7 +105,8 @@ echo $h->make(
 				// ... you can guess what happens here 
 			]]
 		]]
-	]
+	],
+	['class' => 'post post-123 post-story']	
 );
 ```
 
@@ -107,22 +120,22 @@ Obviously you can be very verbose if you like... to annoy other people.
 ```php
 
 echo new Sirius\Html\Tag\Div(
-	// the HTML attributes
-	['id' => 'main', 'class' => 'container'],
-	
 	// the content (a string, array of strings, array of objects),
 	[
-		new Sirius\Html\Tag\Paragraph(['class' => 'warning'], 'This is a warning'),
+		new Sirius\Html\Tag\Paragraph('This is a warning', ['class' => 'warning']),
 		
 		// input elements have values which are passed in the 3rd argument ($data) 
 		// $data contains additional data required for rendering
-		new Sirius\Html\Tag\Textarea(['rows' => 30, 'cols' => 100], null, ['value' => 'The content of the textarea']),
-		new Sirius\Html\Tag\Select(null, null, [
-			'first_option' => 'Select a contry...',
-			'options' => ['US' => 'United States', 'UK' => 'United Kingdom', 'UC' => 'United colors'],
-			'value' => 'US'
+		new Sirius\Html\Tag\Textarea('The content of the textarea', ['rows' => 30, 'cols' => 100]),
+		new Sirius\Html\Tag\Select('US', [
+			'_first_option' => 'Select a contry...',
+			'_options' => ['US' => 'United States', 'UK' => 'United Kingdom', 'UC' => 'United colors']
 		])
-	]
+	],
+	
+	// the HTML attributes
+	['id' => 'main', 'class' => 'container']
+	
 );
 
 ```
@@ -131,18 +144,15 @@ echo new Sirius\Html\Tag\Div(
 
 Once you get access to a `Tag` object you can do stuff with it:
 
-##### `getAttributes($list)` | `setAttributes($attrs)`
-$list = the names of the attributes to be retrieved (null = ALL attributes)
+##### `getProps($list)` | `setProps($props)`
+$list = the names of the properties to be retrieved (null = ALL attributes)
 
-##### `getAttribute($name)` | `setAttribute($name, $value)`
+##### `get($name)` | `set($name, $value)`
 
 ##### `addClass($class)` | `removeClass($class)` | `toggleClass($class)`
 
-##### `getData($list)` | `setData($nameOrArray, $value)`
-$list = the keys of the data array to be retrieved (null = ALL attributes)
-
 ##### `getValue()` | `setValue($value)`
-For form elements. They are aliases for `getData('value')` and `setData('value', $value)`
+For form elements. They are aliases for `get('_value')` and `set('_value', $value)`
 
 ##### `getContent()` | `setContent($content)`
 $content can be a string or an array. `getContent` returns an array that you can play with

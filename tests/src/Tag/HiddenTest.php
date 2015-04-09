@@ -6,9 +6,9 @@ class HiddenTest extends \PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->input = new Hidden(array(
+        $this->input = new Hidden('123', array(
             'name' => 'token'
-        ), '123');
+        ));
     }
 
     function testRender()

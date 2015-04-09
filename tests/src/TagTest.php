@@ -22,13 +22,13 @@ class DivTest extends \PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->element = new Div(array(), 'Lorem ipsum...');
+        $this->element = new Div('Lorem ipsum...');
     }
 
     function testAttributeIsSet()
     {
-        $this->element->setAttribute('name', 'email');
-        $this->assertEquals('email', $this->element->getAttribute('name'));
+        $this->element->set('name', 'email');
+        $this->assertEquals('email', $this->element->get('name'));
     }
 
     function testAttributeListIsRetrieved()
@@ -38,11 +38,11 @@ class DivTest extends \PHPUnit_Framework_TestCase
             'value' => 'me@domain.com',
             'id' => 'form-email'
         );
-        $this->element->setAttributes($attrs);
+        $this->element->setProps($attrs);
         $this->assertEquals(array(
             'name' => 'email',
             'value' => 'me@domain.com'
-        ), $this->element->getAttributes(array(
+        ), $this->element->getProps(array(
             'name',
             'value'
         )));
@@ -54,8 +54,8 @@ class DivTest extends \PHPUnit_Framework_TestCase
             'name' => 'email',
             'value' => 'me@domain.com'
         );
-        $this->element->setAttributes($attrs);
-        $this->assertEquals($attrs, $this->element->getAttributes());
+        $this->element->setProps($attrs);
+        $this->assertEquals($attrs, $this->element->getProps());
     }
 
     function testAttributeIsUnset()
@@ -64,32 +64,32 @@ class DivTest extends \PHPUnit_Framework_TestCase
             'name' => 'email',
             'value' => 'me@domain.com'
         );
-        $this->element->setAttributes($attrs);
-        $this->element->setAttribute('value', null);
+        $this->element->setProps($attrs);
+        $this->element->set('value', null);
         $this->assertEquals(array(
             'name' => 'email'
-        ), $this->element->getAttributes());
+        ), $this->element->getProps());
     }
     
     function testAttributeNameIsCleaned() {
-        $this->element->setAttribute('@name#', 'name');
+        $this->element->set('@name#', 'name');
         $this->assertEquals(array(
         	'name' => 'name'
-        ), $this->element->getAttributes());
+        ), $this->element->getProps());
     }
 
     function testAddClass()
     {
         $this->element->addClass('active');
-        $this->assertEquals('active', $this->element->getAttribute('class'));
+        $this->assertEquals('active', $this->element->get('class'));
         
         $this->element->addClass('disabled');
-        $this->assertEquals('active disabled', $this->element->getAttribute('class'));
+        $this->assertEquals('active disabled', $this->element->get('class'));
     }
 
     function testHasClass()
     {
-        $this->element->setAttribute('class', 'active disabled even');
+        $this->element->set('class', 'active disabled even');
         $this->assertTrue($this->element->hasClass('active'));
         $this->assertTrue($this->element->hasClass('disabled'));
         $this->assertTrue($this->element->hasClass('even'));
@@ -98,7 +98,7 @@ class DivTest extends \PHPUnit_Framework_TestCase
 
     function testRemoveClass()
     {
-        $this->element->setAttribute('class', 'active disabled even');
+        $this->element->set('class', 'active disabled even');
         $this->element->removeClass('disabled');
         $this->assertFalse($this->element->hasClass('disabled'));
     }
@@ -116,50 +116,6 @@ class DivTest extends \PHPUnit_Framework_TestCase
     {
         $this->element->setContent('cool');
         $this->assertEquals('cool', $this->element->getInnerHtml());
-    }
-
-    function testDataIsSet()
-    {
-        // no data at the begining
-        $this->assertEquals(array(), $this->element->getData());
-        $this->element->setData('string', 'cool');
-        $this->assertEquals('cool', $this->element->getData('string'));
-    }
-
-    function testDataIsUnset()
-    {
-        $this->element->setData('string', 'cool');
-        $this->element->setData('string', null);
-        $this->assertNull($this->element->getData('string'));
-    }
-
-    function testBulkDataIsSet()
-    {
-        $data = array(
-            'k1' => 'v1',
-            'k2' => 'v2'
-        );
-        $this->element->setData($data);
-        $this->assertEquals($data, $this->element->getData());
-    }
-
-    function testDataListIsRetrieved()
-    {
-        $data = array(
-            'k1' => 'v1',
-            'k2' => 'v2',
-            'k3' => 'v3'
-        );
-        $this->element->setData($data);
-        $this->assertEquals(array(
-            'k1' => 'v1',
-            'k3' => 'v3',
-            'k4' => null
-        ), $this->element->getData(array(
-            'k1',
-            'k3',
-            'k4'
-        )));
     }
 
     function testContentArray()
@@ -204,7 +160,7 @@ class DivTest extends \PHPUnit_Framework_TestCase
     
     function testSelfClosingTag()
     {
-        $this->assertEquals('<hr class="separator">', new Hr(array(
+        $this->assertEquals('<hr class="separator">', new Hr(null, array(
             'class' => 'separator'
         )));
     }
@@ -214,7 +170,7 @@ class DivTest extends \PHPUnit_Framework_TestCase
         $hr = Tag::create('hr/');
         $this->assertEquals('<hr>', $hr->render());
         
-        $h1 = Tag::create('h1', null, 'Title content');
+        $h1 = Tag::create('h1', 'Title content');
         $this->assertEquals('<h1>Title content</h1>', $h1->render());
     }
 }

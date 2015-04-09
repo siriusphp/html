@@ -6,7 +6,7 @@ class File extends Input
 
     public function render()
     {
-        $this->setAttribute('type', 'file');
+        $this->set('type', 'file');
         return parent::render();
     }
 }

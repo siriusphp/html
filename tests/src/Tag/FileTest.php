@@ -6,7 +6,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->input = new File(array(
+        $this->input = new File(null, array(
             'name' => 'picture',
             'class' => 'upload'
         ));

@@ -6,10 +6,10 @@ class RadioTest extends \PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->input = new Radio(array(
+        $this->input = new Radio('male', array(
             'name' => 'gender',
             'value' => 'male'
-        ), 'male');
+        ));
     }
 
     function testRender()

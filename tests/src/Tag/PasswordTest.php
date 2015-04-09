@@ -6,11 +6,9 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->input = new Password(array(
+        $this->input = new Password('0123456', array(
             'name' => 'password',
             'class' => 'not-valid'
-        ), null, array(
-            'value' => '0123456'
         ));
     }
 

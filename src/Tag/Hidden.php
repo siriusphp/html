@@ -6,8 +6,8 @@ class Hidden extends Input
 
     public function render()
     {
-        $this->setAttribute('type', 'hidden');
-        $this->setAttribute('value', $this->getValue());
+        $this->set('type', 'hidden');
+        $this->set('value', $this->getValue());
         return parent::render();
     }
 }

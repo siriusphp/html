@@ -6,9 +6,9 @@ class Radio extends Input
 
     public function render()
     {
-        $checked = $this->getValue() == $this->getAttribute('value') ? 'checked' : null;
-        $this->setAttribute('checked', $checked);
-        $this->setAttribute('type', 'radio');
+        $checked = $this->getValue() == $this->get('value') ? 'checked' : null;
+        $this->set('checked', $checked);
+        $this->set('type', 'radio');
         return parent::render();
     }
 }
