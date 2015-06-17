@@ -82,7 +82,7 @@ class Tag
      * @param array $props
      * @return Tag
      */
-    static function create($tag, $content = null, $props = null, Builder $builder = null)
+    static public function create($tag, $content = null, $props = null, Builder $builder = null)
     {
         $widget = new static(null, $props, $builder);
         if (substr($tag, - 1) === '/') {
@@ -101,7 +101,7 @@ class Tag
      * @param mixed $content
      *            Content of the HTML element (a string, an array)
      * @param array $props
-     *            Additional data for the HTML element
+     *            Additional data for the HTML element (attributes, private data)
      */
     public function __construct($content = null, $props = null, Builder $builder = null)
     {
@@ -117,8 +117,7 @@ class Tag
     /**
      * Set multipe properties to the HTML element
      *
-     * @param
-     *            $props
+     * @param array $props
      * @return self
      */
     public function setProps($props)
@@ -151,8 +150,13 @@ class Tag
         }
         return $this;
     }
-    
+
+    /**
+     * @param $name
+     * @return mixed
+     */
     protected function cleanAttributeName($name) {
+        // private attributes are allowed to have any form
         if (substr($name, 0, 1) === '_') {
             return $name;
         }
@@ -185,6 +189,7 @@ class Tag
      */
     public function get($name)
     {
+        $name = $this->cleanAttributeName($name);
         return isset($this->props[$name]) ? $this->props[$name] : null;
     }
 
@@ -280,34 +285,44 @@ class Tag
      * 
      * @return \Sirius\Html\Tag
      */
-    function clearContent() {
+    public function clearContent() {
         $this->content = array();
         return $this;
     }
-    
+
+    /**
+     * @param $tagTextOrArray
+     * @return self
+     */
     protected function addChild($tagTextOrArray) {
         // a text node
         if (is_string($tagTextOrArray)) {
-            return array_push($this->content, $tagTextOrArray);            
+            array_push($this->content, $tagTextOrArray);
+            return $this;
         }
         
         // an already constructed tag
         if ($tagTextOrArray instanceof Tag) {
-            return array_push($this->content, $tagTextOrArray);
+            array_push($this->content, $tagTextOrArray);
+            return $this;
         }
-        
-        if (!isset($this->builder)) {
-            throw new \InvalidArgumentException(sprintf('Builder not attached to tag `%s`', $this->tag));
-        }
-        
+
+        // a list of arguments to be passed to builder->make()
         if (is_array($tagTextOrArray) && !empty($tagTextOrArray)) {
+
+            if (!isset($this->builder)) {
+                throw new \InvalidArgumentException(sprintf('Builder not attached to tag `%s`', $this->tag));
+            }
+
             $tagName = $tagTextOrArray[0];
             $props = isset($tagTextOrArray[1]) ? $tagTextOrArray[1] : [];
             $content = isset($tagTextOrArray[2]) ? $tagTextOrArray[2] : [];
             $data = isset($tagTextOrArray[3]) ? $tagTextOrArray[3] : [];            
             $tag = $this->builder->make($tagName, $props, $content, $data, $this->builder);
-            return array_push($this->content, $tag);
+            array_push($this->content, $tag);
         }
+
+        return $this;
     }
 
     /**
@@ -326,7 +341,7 @@ class Tag
                 continue;
             }
             if ($v !== true && is_string($v)) {
-                $result[] = $k . '="' . htmlspecialchars((string) $v, ENT_COMPAT) . '"';
+                $result[] = $k . '="' . $this->escapeAttr($v) . '"';
             } elseif ($v === true) {
                 $result[] = $k;
             }
@@ -336,6 +351,24 @@ class Tag
             $props = ' ' . $props;
         }
         return $props;
+    }
+
+    /**
+     * @param $attr
+     * @return string
+     */
+    protected function escapeAttr($attr) {
+        $attr = (string) $attr;
+
+        if (0 === strlen($attr)) {
+            return '';
+        }
+
+        // Don't bother if there are no specialchars - saves some processing
+        if ( ! preg_match( '/[&<>"\']/', $attr ) )
+            return $attr;
+
+        return htmlspecialchars($attr, ENT_COMPAT);
     }
 
     /**
