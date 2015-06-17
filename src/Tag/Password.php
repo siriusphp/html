@@ -1,17 +1,16 @@
 <?php
 namespace Sirius\Html\Tag;
 
-class Password extends Text
-{
+class Password extends Text {
 
-    protected $tag = 'input';
+	protected $tag = 'input';
 
-    protected $isSelfClosing = true;
+	protected $isSelfClosing = true;
 
-    public function render()
-    {
-        $this->setValue(null); // ensure the value is not displayed
-        $this->set('type', 'password');
-        return parent::render();
-    }
+	public function render() {
+		$this->setValue( null ); // ensure the value is not displayed
+		$this->set( 'type', 'password' );
+
+		return parent::render();
+	}
 }

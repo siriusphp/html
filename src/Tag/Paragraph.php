@@ -1,10 +1,9 @@
 <?php
 namespace Sirius\Html\Tag;
 
-class Paragraph extends Div
-{
+class Paragraph extends Div {
 
-    protected $tag = 'p';
+	protected $tag = 'p';
 
-    protected $isSelfClosing = false;
+	protected $isSelfClosing = false;
 }
