@@ -295,18 +295,6 @@ class Tag
      * @return self
      */
     protected function addChild($tagTextOrArray) {
-        // a text node
-        if (is_string($tagTextOrArray)) {
-            array_push($this->content, $tagTextOrArray);
-            return $this;
-        }
-        
-        // an already constructed tag
-        if ($tagTextOrArray instanceof Tag) {
-            array_push($this->content, $tagTextOrArray);
-            return $this;
-        }
-
         // a list of arguments to be passed to builder->make()
         if (is_array($tagTextOrArray) && !empty($tagTextOrArray)) {
 
@@ -317,9 +305,12 @@ class Tag
             $tagName = $tagTextOrArray[0];
             $props = isset($tagTextOrArray[1]) ? $tagTextOrArray[1] : [];
             $content = isset($tagTextOrArray[2]) ? $tagTextOrArray[2] : [];
-            $data = isset($tagTextOrArray[3]) ? $tagTextOrArray[3] : [];            
-            $tag = $this->builder->make($tagName, $props, $content, $data, $this->builder);
-            array_push($this->content, $tag);
+            $data = isset($tagTextOrArray[3]) ? $tagTextOrArray[3] : [];
+            $tagTextOrArray = $this->builder->make($tagName, $props, $content, $data, $this->builder);
+        }
+
+        if ($tagTextOrArray instanceof Tag || is_string($tagTextOrArray)) {
+            array_push($this->content, $tagTextOrArray);
         }
 
         return $this;
