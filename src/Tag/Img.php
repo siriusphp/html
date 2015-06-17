@@ -5,7 +5,7 @@ use Sirius\Html\Tag;
 
 class Img extends Tag {
 
-	protected $tag = 'img';
+    protected $tag = 'img';
 
-	protected $isSelfClosing = true;
+    protected $isSelfClosing = true;
 }

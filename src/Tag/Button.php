@@ -5,7 +5,7 @@ use Sirius\Html\Tag;
 
 class Button extends Tag {
 
-	protected $tag = 'button';
+    protected $tag = 'button';
 
-	protected $isSelfClosing = false;
+    protected $isSelfClosing = false;
 }
