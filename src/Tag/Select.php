@@ -1,7 +1,8 @@
 <?php
 namespace Sirius\Html\Tag;
 
-class Select extends Input {
+class Select extends Input
+{
 
     protected $tag = 'select';
 
@@ -12,26 +13,28 @@ class Select extends Input {
      *
      * @return string
      */
-    protected function getOptionsString() {
+    protected function getOptionsString()
+    {
         $value   = $this->getValue();
         $options = '';
-        if ( $this->get( '_first_option' ) ) {
-            $options .= sprintf( '<option value="">%s</option>', $this->get( '_first_option' ) );
+        if ($this->get('_first_option')) {
+            $options .= sprintf('<option value="">%s</option>', $this->get('_first_option'));
         }
-        $optionsList = $this->get( '_options' ) ?: array();
-        foreach ( $optionsList as $k => $v ) {
+        $optionsList = $this->get('_options') ?: array();
+        foreach ($optionsList as $k => $v) {
             $selected = '';
-            if ( ( is_string( $value ) && $k == $value ) || ( is_array( $value ) && in_array( $k, $value ) ) ) {
+            if ((is_string($value) && $k == $value) || (is_array($value) && in_array($k, $value))) {
                 $selected = 'selected="selected"';
             }
-            $options .= sprintf( '<option value="%s" %s>%s</option>', htmlentities( $k, ENT_COMPAT ), $selected, $v );
+            $options .= sprintf('<option value="%s" %s>%s</option>', htmlentities($k, ENT_COMPAT), $selected, $v);
         }
 
         return $options;
     }
 
-    public function render() {
-        $this->setContent( $this->getOptionsString() );
+    public function render()
+    {
+        $this->setContent($this->getOptionsString());
 
         return parent::render();
     }

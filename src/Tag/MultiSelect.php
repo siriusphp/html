@@ -1,7 +1,8 @@
 <?php
 namespace Sirius\Html\Tag;
 
-class MultiSelect extends Select {
+class MultiSelect extends Select
+{
 
     protected $tag = 'select';
 
@@ -12,29 +13,31 @@ class MultiSelect extends Select {
      *
      * @return string
      */
-    protected function getOptionsString() {
+    protected function getOptionsString()
+    {
         $value   = $this->getValue();
         $options = '';
-        if ( $this->get( '_first_option' ) ) {
-            $options .= sprintf( '<option value="">%s</option>', $this->get( '_first_option' ) );
+        if ($this->get('_first_option')) {
+            $options .= sprintf('<option value="">%s</option>', $this->get('_first_option'));
         }
-        $optionsList = $this->get( '_options' ) ?: array();
-        foreach ( $optionsList as $k => $v ) {
+        $optionsList = $this->get('_options') ?: array();
+        foreach ($optionsList as $k => $v) {
             $selected = '';
             // be flexible, accept a non-array value
-            if ( ( is_string( $value ) && $k == $value ) || ( is_array( $value ) && in_array( $k, $value ) ) ) {
+            if ((is_string($value) && $k == $value) || (is_array($value) && in_array($k, $value))) {
                 $selected = 'selected="selected"';
             }
-            $options .= sprintf( '<option value="%s" %s>%s</option>', htmlentities( $k, ENT_COMPAT ), $selected, $v );
+            $options .= sprintf('<option value="%s" %s>%s</option>', htmlentities($k, ENT_COMPAT), $selected, $v);
         }
 
         return $options;
     }
 
-    public function render() {
-        $name = $this->get( 'name' );
-        if ( substr( $name, - 2 ) !== '[]' ) {
-            $this->set( 'name', $name . '[]' );
+    public function render()
+    {
+        $name = $this->get('name');
+        if (substr($name, - 2) !== '[]') {
+            $this->set('name', $name . '[]');
         }
 
         return parent::render();

@@ -9,7 +9,8 @@ namespace Sirius\Html;
  * - before(): add something before the element
  * - after(): add something after the element;
  */
-class Tag {
+class Tag
+{
 
     /**
      * Items (strings) to be added before the element
@@ -77,21 +78,23 @@ class Tag {
      *          ExtendedTag::factory('div', 'This is my content', ['class' => 'container']);
      *
      * @param string $tag
-     * @param mixed $content
      * @param array $props
+     * @param mixed $content
+     * @param Builder $builder
      *
      * @return Tag
      */
-    static public function create( $tag, $content = null, $props = null, Builder $builder = null ) {
-        $widget = new static( null, $props, $builder );
-        if ( substr( $tag, - 1 ) === '/' ) {
-            $widget->tag           = substr( $tag, 0, - 1 );
+    static public function create($tag, $props = null, $content = null, Builder $builder = null)
+    {
+        $widget = new static($props, $content, $builder);
+        if (substr($tag, - 1) === '/') {
+            $widget->tag           = substr($tag, 0, - 1);
             $widget->isSelfClosing = true;
         } else {
             $widget->tag           = $tag;
             $widget->isSelfClosing = false;
         }
-        $widget->setContent( $content );
+        $widget->setContent($content);
 
         return $widget;
     }
@@ -103,13 +106,14 @@ class Tag {
      * @param array $props
      *            Additional data for the HTML element (attributes, private data)
      */
-    public function __construct( $content = null, $props = null, Builder $builder = null ) {
+    public function __construct($props = null, $content = null, Builder $builder = null)
+    {
         $this->builder = $builder;
-        if ( $props !== null ) {
-            $this->setProps( $props );
+        if ($props !== null) {
+            $this->setProps($props);
         }
-        if ( $content !== null ) {
-            $this->setContent( $content );
+        if ($content !== null) {
+            $this->setContent($content);
         }
     }
 
@@ -120,12 +124,13 @@ class Tag {
      *
      * @return self
      */
-    public function setProps( $props ) {
-        if ( ! is_array( $props ) ) {
+    public function setProps($props)
+    {
+        if ( ! is_array($props)) {
             return $this;
         }
-        foreach ( $props as $name => $value ) {
-            $this->set( $name, $value );
+        foreach ($props as $name => $value) {
+            $this->set($name, $value);
         }
 
         return $this;
@@ -139,13 +144,14 @@ class Tag {
      *
      * @return Tag
      */
-    public function set( $name, $value = null ) {
-        if ( is_string( $name ) ) {
-            $name = $this->cleanAttributeName( $name );
-            if ( $value === null && isset( $this->props[ $name ] ) ) {
-                unset( $this->props[ $name ] );
-            } elseif ( $value !== null ) {
-                $this->props[ $name ] = $value;
+    public function set($name, $value = null)
+    {
+        if (is_string($name)) {
+            $name = $this->cleanAttributeName($name);
+            if ($value === null && isset($this->props[$name])) {
+                unset($this->props[$name]);
+            } elseif ($value !== null) {
+                $this->props[$name] = $value;
             }
         }
 
@@ -157,13 +163,14 @@ class Tag {
      *
      * @return mixed
      */
-    protected function cleanAttributeName( $name ) {
+    protected function cleanAttributeName($name)
+    {
         // private attributes are allowed to have any form
-        if ( substr( $name, 0, 1 ) === '_' ) {
+        if (substr($name, 0, 1) === '_') {
             return $name;
         }
 
-        return preg_replace( '/[^a-zA-Z0-9-]+/', '', $name );
+        return preg_replace('/[^a-zA-Z0-9-]+/', '', $name);
     }
 
     /**
@@ -173,11 +180,12 @@ class Tag {
      *
      * @return array
      */
-    public function getProps( $list = null ) {
-        if ( $list && is_array( $list ) ) {
+    public function getProps($list = null)
+    {
+        if ($list && is_array($list)) {
             $result = array();
-            foreach ( $list as $key ) {
-                $result[ $key ] = $this->get( $key );
+            foreach ($list as $key) {
+                $result[$key] = $this->get($key);
             }
 
             return $result;
@@ -193,10 +201,11 @@ class Tag {
      *
      * @return mixed
      */
-    public function get( $name ) {
-        $name = $this->cleanAttributeName( $name );
+    public function get($name)
+    {
+        $name = $this->cleanAttributeName($name);
 
-        return isset( $this->props[ $name ] ) ? $this->props[ $name ] : null;
+        return isset($this->props[$name]) ? $this->props[$name] : null;
     }
 
     /**
@@ -206,9 +215,10 @@ class Tag {
      *
      * @return self
      */
-    public function addClass( $class ) {
-        if ( ! $this->hasClass( $class ) ) {
-            $this->set( 'class', trim( (string) $this->get( 'class' ) . ' ' . $class ) );
+    public function addClass($class)
+    {
+        if ( ! $this->hasClass($class)) {
+            $this->set('class', trim((string) $this->get('class') . ' ' . $class));
         }
 
         return $this;
@@ -221,11 +231,12 @@ class Tag {
      *
      * @return self
      */
-    public function removeClass( $class ) {
-        $classes = $this->get( 'class' );
-        if ( $classes ) {
-            $classes = trim( preg_replace( '/(^| ){1}' . $class . '( |$){1}/i', ' ', $classes ) );
-            $this->set( 'class', $classes );
+    public function removeClass($class)
+    {
+        $classes = $this->get('class');
+        if ($classes) {
+            $classes = trim(preg_replace('/(^| ){1}' . $class . '( |$){1}/i', ' ', $classes));
+            $this->set('class', $classes);
         }
 
         return $this;
@@ -238,12 +249,13 @@ class Tag {
      *
      * @return self
      */
-    public function toggleClass( $class ) {
-        if ( $this->hasClass( $class ) ) {
-            return $this->removeClass( $class );
+    public function toggleClass($class)
+    {
+        if ($this->hasClass($class)) {
+            return $this->removeClass($class);
         }
 
-        return $this->addClass( $class );
+        return $this->addClass($class);
     }
 
     /**
@@ -253,10 +265,11 @@ class Tag {
      *
      * @return boolean
      */
-    public function hasClass( $class ) {
-        $classes = $this->get( 'class' );
+    public function hasClass($class)
+    {
+        $classes = $this->get('class');
 
-        return $classes && ( (bool) preg_match( '/(^| ){1}' . $class . '( |$){1}/i', $classes ) );
+        return $classes && ((bool) preg_match('/(^| ){1}' . $class . '( |$){1}/i', $classes));
     }
 
     /**
@@ -266,16 +279,17 @@ class Tag {
      *
      * @return $this
      */
-    public function setContent( $content ) {
-        if ( ! $content ) {
+    public function setContent($content)
+    {
+        if ( ! $content) {
             return $this;
         }
-        if ( ! is_array( $content ) ) {
+        if ( ! is_array($content)) {
             $content = array( $content );
         }
         $this->clearContent();
-        foreach ( $content as $child ) {
-            $this->addChild( $child );
+        foreach ($content as $child) {
+            $this->addChild($child);
         }
 
         return $this;
@@ -284,9 +298,10 @@ class Tag {
     /**
      * Get the content/children
      *
-     * @return \Sirius\Html\TagContainer
+     * @return mixed
      */
-    public function getContent() {
+    public function getContent()
+    {
         return $this->content;
     }
 
@@ -295,7 +310,8 @@ class Tag {
      *
      * @return \Sirius\Html\Tag
      */
-    public function clearContent() {
+    public function clearContent()
+    {
         $this->content = array();
 
         return $this;
@@ -306,23 +322,24 @@ class Tag {
      *
      * @return self
      */
-    protected function addChild( $tagTextOrArray ) {
+    protected function addChild($tagTextOrArray)
+    {
         // a list of arguments to be passed to builder->make()
-        if ( is_array( $tagTextOrArray ) && ! empty( $tagTextOrArray ) ) {
+        if (is_array($tagTextOrArray) && ! empty($tagTextOrArray)) {
 
-            if ( ! isset( $this->builder ) ) {
-                throw new \InvalidArgumentException( sprintf( 'Builder not attached to tag `%s`', $this->tag ) );
+            if ( ! isset($this->builder)) {
+                throw new \InvalidArgumentException(sprintf('Builder not attached to tag `%s`', $this->tag));
             }
 
             $tagName        = $tagTextOrArray[0];
-            $props          = isset( $tagTextOrArray[1] ) ? $tagTextOrArray[1] : [ ];
-            $content        = isset( $tagTextOrArray[2] ) ? $tagTextOrArray[2] : [ ];
-            $data           = isset( $tagTextOrArray[3] ) ? $tagTextOrArray[3] : [ ];
-            $tagTextOrArray = $this->builder->make( $tagName, $props, $content, $data, $this->builder );
+            $props          = isset($tagTextOrArray[1]) ? $tagTextOrArray[1] : [ ];
+            $content        = isset($tagTextOrArray[2]) ? $tagTextOrArray[2] : [ ];
+            $data           = isset($tagTextOrArray[3]) ? $tagTextOrArray[3] : [ ];
+            $tagTextOrArray = $this->builder->make($tagName, $props, $content, $data, $this->builder);
         }
 
-        if ( $tagTextOrArray instanceof Tag || is_string( $tagTextOrArray ) ) {
-            array_push( $this->content, $tagTextOrArray );
+        if ($tagTextOrArray instanceof Tag || is_string($tagTextOrArray)) {
+            array_push($this->content, $tagTextOrArray);
         }
 
         return $this;
@@ -334,22 +351,23 @@ class Tag {
      *
      * @return string
      */
-    protected function getAttributesString() {
+    protected function getAttributesString()
+    {
         $result = array();
         $props  = $this->getProps();
-        ksort( $props );
-        foreach ( $props as $k => $v ) {
-            if ( substr( $k, 0, 1 ) === '_' ) {
+        ksort($props);
+        foreach ($props as $k => $v) {
+            if (substr($k, 0, 1) === '_') {
                 continue;
             }
-            if ( $v !== true && is_string( $v ) ) {
-                $result[] = $k . '="' . $this->escapeAttr( $v ) . '"';
-            } elseif ( $v === true ) {
+            if ($v !== true && is_string($v)) {
+                $result[] = $k . '="' . $this->escapeAttr($v) . '"';
+            } elseif ($v === true) {
                 $result[] = $k;
             }
         }
-        $props = implode( ' ', $result );
-        if ( $props ) {
+        $props = implode(' ', $result);
+        if ($props) {
             $props = ' ' . $props;
         }
 
@@ -361,19 +379,20 @@ class Tag {
      *
      * @return string
      */
-    protected function escapeAttr( $attr ) {
+    protected function escapeAttr($attr)
+    {
         $attr = (string) $attr;
 
-        if ( 0 === strlen( $attr ) ) {
+        if (0 === strlen($attr)) {
             return '';
         }
 
         // Don't bother if there are no specialchars - saves some processing
-        if ( ! preg_match( '/[&<>"\']/', $attr ) ) {
+        if ( ! preg_match('/[&<>"\']/', $attr)) {
             return $attr;
         }
 
-        return htmlspecialchars( $attr, ENT_COMPAT );
+        return htmlspecialchars($attr, ENT_COMPAT);
     }
 
     /**
@@ -381,16 +400,17 @@ class Tag {
      *
      * @return string
      */
-    public function render() {
-        if ( $this->isSelfClosing ) {
+    public function render()
+    {
+        if ($this->isSelfClosing) {
             $template = "<{$this->tag}%s>";
-            $element  = sprintf( $template, $this->getAttributesString() );
+            $element  = sprintf($template, $this->getAttributesString());
         } else {
             $template = "<{$this->tag}%s>%s</{$this->tag}>";
-            $element  = sprintf( $template, $this->getAttributesString(), $this->getInnerHtml() );
+            $element  = sprintf($template, $this->getAttributesString(), $this->getInnerHtml());
         }
-        $before = implode( PHP_EOL, $this->before );
-        $after  = implode( PHP_EOL, $this->after );
+        $before = implode(PHP_EOL, $this->before);
+        $after  = implode(PHP_EOL, $this->after);
 
         return $before . $element . $after;
     }
@@ -400,11 +420,13 @@ class Tag {
      *
      * @return string
      */
-    public function getInnerHtml() {
-        return implode( PHP_EOL, $this->content );
+    public function getInnerHtml()
+    {
+        return implode(PHP_EOL, $this->content);
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return $this->render();
     }
 
@@ -415,8 +437,9 @@ class Tag {
      *
      * @return Tag
      */
-    public function before( $stringOrObject ) {
-        array_unshift( $this->before, $stringOrObject );
+    public function before($stringOrObject)
+    {
+        array_unshift($this->before, $stringOrObject);
 
         return $this;
     }
@@ -428,8 +451,9 @@ class Tag {
      *
      * @return Tag
      */
-    public function after( $stringOrObject ) {
-        array_push( $this->after, $stringOrObject );
+    public function after($stringOrObject)
+    {
+        array_push($this->after, $stringOrObject);
 
         return $this;
     }
@@ -441,8 +465,9 @@ class Tag {
      *
      * @return Tag
      */
-    public function prepend( $stringOrObject ) {
-        array_unshift( $this->content, $stringOrObject );
+    public function prepend($stringOrObject)
+    {
+        array_unshift($this->content, $stringOrObject);
 
         return $this;
     }
@@ -454,8 +479,9 @@ class Tag {
      *
      * @return Tag
      */
-    public function append( $stringOrObject ) {
-        array_push( $this->content, $stringOrObject );
+    public function append($stringOrObject)
+    {
+        array_push($this->content, $stringOrObject);
 
         return $this;
     }
@@ -469,8 +495,9 @@ class Tag {
      *
      * @return Tag
      */
-    public function wrap( $before, $after ) {
-        return $this->before( $before )->after( $after );
+    public function wrap($before, $after)
+    {
+        return $this->before($before)->after($after);
     }
 }
 

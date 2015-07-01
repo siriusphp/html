@@ -32,6 +32,7 @@ which will output something like
 <!-- the rest of the form goes here -->
 
 </form>
+```
 
 ## Links
 

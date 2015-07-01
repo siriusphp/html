@@ -9,15 +9,17 @@ use Sirius\Html\Tag;
  *
  * @see \Sirius\FormsRenderer\Renderer\Widget\Base
  */
-class Input extends Tag {
+class Input extends Tag
+{
 
     protected $tag = 'input';
 
     protected $isSelfClosing = true;
 
-    public function __construct( $content = null, $props = null ) {
-        parent::__construct( null, $props );
-        $this->setValue( $content );
+    public function __construct($props = null, $content = null)
+    {
+        parent::__construct($props, null);
+        $this->setValue($content);
     }
 
     /**
@@ -27,8 +29,9 @@ class Input extends Tag {
      *
      * @return self
      */
-    public function setValue( $val ) {
-        $this->set( '_value', $val );
+    public function setValue($val)
+    {
+        $this->set('_value', $val);
     }
 
     /**
@@ -36,7 +39,8 @@ class Input extends Tag {
      *
      * @return string
      */
-    public function getValue() {
-        return $this->get( '_value' );
+    public function getValue()
+    {
+        return $this->get('_value');
     }
 }

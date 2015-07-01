@@ -1,7 +1,8 @@
 <?php
 namespace Sirius\Html\Tag;
 
-class Paragraph extends Div {
+class Paragraph extends Div
+{
 
     protected $tag = 'p';
 

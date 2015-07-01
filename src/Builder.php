@@ -1,7 +1,8 @@
 <?php
 namespace Sirius\Html;
 
-class Builder {
+class Builder
+{
 
     protected $tagFactories = array(
         'button'      => 'Sirius\Html\Tag\Button',
@@ -28,8 +29,9 @@ class Builder {
      *
      * @return self
      */
-    public function registerTag( $name, $classOrCallback ) {
-        $this->tagFactories[ $name ] = $classOrCallback;
+    public function registerTag($name, $classOrCallback)
+    {
+        $this->tagFactories[$name] = $classOrCallback;
 
         return $this;
     }
@@ -38,30 +40,31 @@ class Builder {
      * Make an HTML tag with a specific tag name (div, p, section etc)
      *
      * @param string $tag
-     * @param mixed $content
      * @param mixed $props
+     * @param mixed $content
      *
      * @throws \InvalidArgumentException
      * @return Tag
      */
-    public function make( $tag, $content = null, $props = null ) {
-        if ( ! isset( $this->tagFactories[ $tag ] ) ) {
-            return Tag::create( $tag, $content, $props, $this );
+    public function make($tag, $props = null, $content = null)
+    {
+        if ( ! isset($this->tagFactories[$tag])) {
+            return Tag::create($tag, $props, $content, $this);
         }
 
-        $constructor = $this->tagFactories[ $tag ];
+        $constructor = $this->tagFactories[$tag];
 
-        if ( is_callable( $constructor ) ) {
+        if (is_callable($constructor)) {
             /* @var $tag Tag */
-            $tag = call_user_func( $constructor, $content, $props, $this );
-        } elseif ( is_string( $constructor ) && class_exists( $constructor ) ) {
+            $tag = call_user_func($constructor, $props, $content, $this);
+        } elseif (is_string($constructor) && class_exists($constructor)) {
             /* @var $tag Tag */
-            $tag = new $constructor( $content, $props, $this );
+            $tag = new $constructor($props, $content, $this);
         }
 
-        if ( ! $tag || ! $tag instanceof Tag ) {
-            throw  new \InvalidArgumentException( sprintf( 'The constructor for the `%s` tag did not generate a Tag object',
-                $tag ) );
+        if ( ! $tag || ! $tag instanceof Tag) {
+            throw  new \InvalidArgumentException(sprintf('The constructor for the `%s` tag did not generate a Tag object',
+                $tag));
         }
 
         return $tag;
@@ -71,27 +74,30 @@ class Builder {
     /**
      * Magic method for creating HTML tags
      *
-     * @example $builder->h1(null, 'Heading 1');
-     *          $builder->article(['class' => 'post-body'], 'Article body');
+     * @example
+     * $builder->h1(null, 'Heading 1'); // <h1>Heading 1</h1>
+     * $builder->article(['class' => 'post-body'], 'Article body'); // '<article class='post-body'>Article body</article>
+     * $builder->someTag(); // <some-tag></some-tag>
      *
      * @param string $method
      * @param array $args
      *
      * @return Tag
      */
-    public function __call( $method, $args ) {
-        $method = preg_replace( '/([A-Z]+)/', '-\1', $method );
-        $method = strtolower( $method );
-        if ( ! isset( $args[0] ) ) {
+    public function __call($method, $args)
+    {
+        $method = preg_replace('/([A-Z]+)/', '-\1', $method);
+        $method = strtolower($method);
+        if ( ! isset($args[0])) {
             $args[0] = array();
         }
-        if ( ! isset( $args[1] ) ) {
+        if ( ! isset($args[1])) {
             $args[1] = null;
         }
-        if ( ! isset( $args[2] ) ) {
+        if ( ! isset($args[2])) {
             $args[2] = null;
         }
 
-        return $this->make( $method, $args[0], $args[1], $args[2] );
+        return $this->make($method, $args[0], $args[1], $args[2]);
     }
 }
