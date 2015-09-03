@@ -6,6 +6,7 @@ php:
   - 5.5
   - 5.6
   - hhvm
+  - '7'
 
 matrix:
     allow_failures:
@@ -18,7 +19,7 @@ before_script:
 script:
   - mkdir -p build/logs
   - cd tests
-  - phpunit
+  - php ../vendor/phpunit/phpunit/phpunit
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar

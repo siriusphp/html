@@ -97,12 +97,12 @@ echo $h->make('blog-article', [], ['_entry' => $someBlogPost]);
 echo $h->make(
 	'article', 
 	[
-		['heading', [], $post->post_name],
-		['section', [], $post->content],
-		['footer', [], 'Written by ' . $post->author],
-		['aside', [], [
-			['h3', [], 'Similar articles'],
-			['ul', [], [
+		['heading', $post->post_name],
+		['section', $post->content],
+		['footer', 'Written by ' . $post->author],
+		['aside', [
+			['h3', 'Similar articles'],
+			['ul', [
 				// ... you can guess what happens here 
 			]]
 		]]

@@ -20,6 +20,11 @@ class Hr extends Tag
 class DivTest extends \PHPUnit_Framework_TestCase
 {
 
+    /*
+     * @var Div
+     */
+    protected $element;
+
     function setUp()
     {
         $this->element = new Div([], 'Lorem ipsum...');
@@ -162,6 +167,17 @@ class DivTest extends \PHPUnit_Framework_TestCase
         $this->element->prepend('<aside>Aside</aside>');
         $this->assertTrue(strpos($this->element->getInnerHtml(),
                 '<article') > strpos($this->element->getInnerHtml(), '<aside'));
+    }
+
+    function testSpecialAttributesCharacters()
+    {
+        $this->element->set('class', '<weird>"characters"');
+        $this->assertEquals('<div class="&lt;weird&gt;&quot;characters&quot;">Lorem ipsum...</div>', (string) $this->element);
+    }
+
+    function testEmptyAttribute() {
+        $this->element->set('class', '');
+        $this->assertEquals('<div class="">Lorem ipsum...</div>', (string) $this->element);
     }
 
     function testSelfClosingTag()

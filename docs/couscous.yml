@@ -1,0 +1,59 @@
+template:
+    url: https://github.com/siriusphp/Template-ReadTheDocs
+
+# List of directories to exclude from the processing (default contains "vendor" and "website")
+# Paths are relative to the repository root
+exclude:
+    - website
+    - vendor
+    - test
+    - src
+    - build
+
+# Base URL of the published website (no "/" at the end!)
+# You are advised to set and use this variable to write your links in the HTML layouts
+baseUrl: http://www.sirius.ro/php/sirius/html
+
+projectName: Sirius\Html
+title: Sirius\Html
+subTitle: HTML rendering library inspired by ReactJS
+
+# The left menu bar
+menu:
+    sections:
+#        versions:
+#            name: Versions
+#            items:
+#                two:
+#                    text: "2.0"
+#                    relativeUrl:
+#                one:
+#                    text: "1.0"
+#                    relativeUrl: 1_0/
+        guide:
+            name: Getting started
+            items:
+                getting_started:
+                    text: Introduction
+                    relativeUrl:
+                installation:
+                    text: Installation
+                    relativeUrl: installation.html
+                simple_example:
+                    text: Simple example
+                    relativeUrl: simple_example.html
+                default_tags:
+                    text: Default tags
+                    relativeUrl: default_tags.html
+                tags_api:
+                    text: Tag API
+                    relativeUrl: tags_api.html
+        cookbook:
+            name: Cookbook
+            items:
+                custom_tags:
+                    text: Custom tags/components
+                    relativeUrl: custom_tags.html
+                extending:
+                    text: Extending the builder
+                    relativeUrl: extending.html
