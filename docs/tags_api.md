@@ -56,10 +56,10 @@ $tag->wrap('this is added before', 'this is added after');
 ## Form input tags are special
 
 1. The input tags have `setValue()` and `getValue()` 
-2. Using `getContents` and `setContents` for an input tag doesn't do anything
+2. Using `getContents` and `setContents` for an input tag behaves like `getValue()` and `setValue()` 
 
 ```php
 $input = $h->text(null, 'myemail@domain.com');
 $input->setValue('anotheremail@domain.com');
-$input->setContent('this will not be applied');
+$input->setContent('anotheremail@domain.com'); //same thing
 ``

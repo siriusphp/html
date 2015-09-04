@@ -32,10 +32,9 @@ class Select extends Input
         return $options;
     }
 
-    public function render()
+    public function getInnerHtml()
     {
-        $this->setContent($this->getOptionsString());
-
-        return parent::render();
+        return $this->getOptionsString();
     }
+
 }

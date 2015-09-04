@@ -8,10 +8,8 @@ class Textarea extends Input
 
     protected $isSelfClosing = false;
 
-    public function render()
+    public function getInnerHtml()
     {
-        $this->setContent($this->getValue());
-
-        return parent::render();
+        return $this->getValue();
     }
 }

@@ -16,12 +16,6 @@ class Input extends Tag
 
     protected $isSelfClosing = true;
 
-    public function __construct($props = null, $content = null)
-    {
-        parent::__construct($props, null);
-        $this->setValue($content);
-    }
-
     /**
      * Set value of the input element
      *
@@ -42,5 +36,13 @@ class Input extends Tag
     public function getValue()
     {
         return $this->get('_value');
+    }
+
+    public function setContent($content) {
+        return $this->setValue($content);
+    }
+
+    public function getContent() {
+        return $this->getValue();
     }
 }
