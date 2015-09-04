@@ -6,7 +6,8 @@ title: Extending the tag builder
 
 Each application has different requirements. Some may use filters to alter the behavior (ala Wordpress), others may use events, other may need to implement a decorator mechanism (eg: to automatically add Bootstrap classes to form elements)
 
-In the later case you may do something like
+## Using decorators
+
 
 ```php
 

@@ -4,6 +4,19 @@ namespace Sirius\Html;
 class Builder
 {
 
+    /**
+     * A list of configuration parameters that can be used
+     * by tags, decorators etc when rendering
+     *
+     * @var array
+     */
+    protected $options = array();
+
+    /**
+     * tag-to-class name mappings
+     *
+     * @var array
+     */
     protected $tagFactories = array(
         'button'      => 'Sirius\Html\Tag\Button',
         'checkbox'    => 'Sirius\Html\Tag\Checkbox',
@@ -20,6 +33,54 @@ class Builder
         'text'        => 'Sirius\Html\Tag\Text',
         'textarea'    => 'Sirius\Html\Tag\Textarea'
     );
+
+    /**
+     * @param array $options
+     */
+    function __construct($options = array())
+    {
+        $this->options = array();
+    }
+
+    /**
+     * Sets a value of an option
+     *
+     * @param $name
+     * @param $value
+     */
+    function setOption($name, $value)
+    {
+        $this->options[$name] = $value;
+    }
+
+    /**
+     * Get a configuration option
+     *
+     * @param $name
+     *
+     * @return null
+     */
+    function getOption($name)
+    {
+        return isset($this->options[$name]) ? $this->options[$name] : null;
+    }
+
+    /**
+     * Clones the instance and applies new set of options
+     *
+     * @param $options
+     *
+     * @return Builder
+     */
+    function with($options)
+    {
+        $clone = clone $this;
+        foreach ($options as $name => $value) {
+            $clone->setOption($name, $value);
+        }
+
+        return $clone;
+    }
 
     /**
      * Add an element factory (class or callback)

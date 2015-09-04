@@ -3,6 +3,10 @@ namespace Sirius\Html;
 
 class BuilderTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Builder
+     */
+    protected $builder;
 
     function setUp()
     {
@@ -87,5 +91,19 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(strpos($renderedHtml, '<div class="form-help">') !== false);
         $this->assertTrue(strpos($renderedHtml, '<label>Username') !== false);
         $this->assertTrue(strpos($renderedHtml, '<input type="text">') !== false);
+    }
+
+    function testOptions() {
+        $this->assertNull($this->builder->getOption('use_bootstrap'));
+        $this->builder->setOption('use_bootstrap', true);
+        $this->assertTrue($this->builder->getOption('use_bootstrap'));
+    }
+
+    function testWith() {
+        $this->assertNull($this->builder->getOption('use_bootstrap'));
+        $newBuilder = $this->builder->with(array('use_bootstrap' => true));
+
+        $this->assertNotEquals($this->builder, $newBuilder);
+        $this->assertTrue($newBuilder->getOption('use_bootstrap'));
     }
 }

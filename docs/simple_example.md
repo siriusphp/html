@@ -8,7 +8,13 @@ Without any preparation you can write HTML like this
 
 ```php
 
-$h = new Sirius\Html\Builder;
+// a list of options for the builder instance
+// this is useful when you implement custom tags 
+// that need access to some sort of global state
+$options = array(
+	'use_boostrap' => true
+);
+$h = new Sirius\Html\Builder($options);
 
 echo $h->make(
 	/* name of the tag */
@@ -61,3 +67,21 @@ $h->select([
 	'_options' => ['Romania', 'USA', 'Zimbawe']
 ], 'Romania');
 ```
+
+## Cloning the tag builder
+
+Sometimes you might need to render some tag using a different configuration. Let's say you have a tag builder that you use to render input elements using Bootstrap classes.
+
+```php
+$b = new Sirius\Html\Builder(['boostrap_styles' => true]);
+$b->text(["name" => "email"], 'email@domain.com');
+```
+
+At some point you want to render some input elements without those styles but you want to keep the rest of builder's capabilities (registered tags, other options)
+
+```php
+$newB = $b->with(['bootstrap_styles' => false]);
+$newB->text(["name" => "email"], 'email@domain.com');
+```
+
+This situation is useful if you use decorators, events or other ways to change the default rendering behaviour.
