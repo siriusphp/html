@@ -126,7 +126,7 @@ class Tag
      */
     public function setProps($props)
     {
-        if ( ! is_array($props) && ! ($props instanceof Traversable)) {
+        if ( ! is_array($props) && ! ($props instanceof \Traversable)) {
             return $this;
         }
         foreach ($props as $name => $value) {

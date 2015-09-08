@@ -37,9 +37,9 @@ class Builder
     /**
      * @param array $options
      */
-    function __construct($options = array())
+    public function __construct($options = array())
     {
-        $this->options = array();
+        $this->options = $options;
     }
 
     /**
@@ -48,7 +48,7 @@ class Builder
      * @param $name
      * @param $value
      */
-    function setOption($name, $value)
+    public function setOption($name, $value)
     {
         $this->options[$name] = $value;
     }
@@ -60,7 +60,7 @@ class Builder
      *
      * @return null
      */
-    function getOption($name)
+    public function getOption($name)
     {
         return isset($this->options[$name]) ? $this->options[$name] : null;
     }
@@ -72,7 +72,7 @@ class Builder
      *
      * @return Builder
      */
-    function with($options)
+    public function with($options)
     {
         $clone = clone $this;
         foreach ($options as $name => $value) {
