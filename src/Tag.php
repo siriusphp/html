@@ -337,9 +337,7 @@ class Tag
             $tagTextOrArray = $this->builder->make($tagName, $props, $content, $this->builder);
         }
 
-        if ($tagTextOrArray instanceof Tag || is_string($tagTextOrArray)) {
-            array_push($this->content, $tagTextOrArray);
-        }
+        array_push($this->content, $tagTextOrArray);
 
         return $this;
     }
