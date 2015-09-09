@@ -38,11 +38,13 @@ class Input extends Tag
         return $this->get('_value');
     }
 
-    public function setContent($content) {
+    public function setContent($content)
+    {
         return $this->setValue($content);
     }
 
-    public function getContent() {
+    public function getContent()
+    {
         return $this->getValue();
     }
 }

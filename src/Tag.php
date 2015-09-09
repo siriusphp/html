@@ -374,14 +374,16 @@ class Tag
      *
      * @return array
      */
-    protected function getValidAttributes() {
-        $attrs = [];
+    protected function getValidAttributes()
+    {
+        $attrs = [ ];
         foreach ($this->getProps() as $k => $v) {
             if (substr($k, 0, 1) !== '_') {
                 $attrs[$k] = $v;
             }
 
         }
+
         return $attrs;
     }
 

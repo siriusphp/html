@@ -19,13 +19,13 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 
     function testCustomTag()
     {
-        $this->assertEquals('<other-tag>Content</other-tag>', $this->builder->make('some-tag', [], 'Content')
+        $this->assertEquals('<other-tag>Content</other-tag>', $this->builder->make('some-tag', [ ], 'Content')
                                                                             ->render());
     }
 
     function testMagicCall()
     {
-        $this->assertEquals('<other-tag>Content</other-tag>', $this->builder->someTag([], 'Content')
+        $this->assertEquals('<other-tag>Content</other-tag>', $this->builder->someTag([ ], 'Content')
                                                                             ->render());
     }
 
@@ -66,7 +66,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
                 [
                     [
                         'label',
-                        [],
+                        [ ],
                         'Username'
                     ],
                     [
@@ -93,15 +93,17 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(strpos($renderedHtml, '<input type="text">') !== false);
     }
 
-    function testOptions() {
+    function testOptions()
+    {
         $this->assertNull($this->builder->getOption('use_bootstrap'));
         $this->builder->setOption('use_bootstrap', true);
         $this->assertTrue($this->builder->getOption('use_bootstrap'));
     }
 
-    function testWith() {
+    function testWith()
+    {
         $this->assertNull($this->builder->getOption('use_bootstrap'));
-        $newBuilder = $this->builder->with(array('use_bootstrap' => true));
+        $newBuilder = $this->builder->with(array( 'use_bootstrap' => true ));
 
         $this->assertNotEquals($this->builder, $newBuilder);
         $this->assertTrue($newBuilder->getOption('use_bootstrap'));

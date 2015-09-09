@@ -27,7 +27,7 @@ class DivTest extends \PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->element = new Div([], 'Lorem ipsum...');
+        $this->element = new Div([ ], 'Lorem ipsum...');
     }
 
     function testAttributeIsSet()
@@ -172,10 +172,12 @@ class DivTest extends \PHPUnit_Framework_TestCase
     function testSpecialAttributesCharacters()
     {
         $this->element->set('class', '<weird>"characters"');
-        $this->assertEquals('<div class="&lt;weird&gt;&quot;characters&quot;">Lorem ipsum...</div>', (string) $this->element);
+        $this->assertEquals('<div class="&lt;weird&gt;&quot;characters&quot;">Lorem ipsum...</div>',
+            (string) $this->element);
     }
 
-    function testEmptyAttribute() {
+    function testEmptyAttribute()
+    {
         $this->element->set('class', '');
         $this->assertEquals('<div class="">Lorem ipsum...</div>', (string) $this->element);
     }
@@ -192,7 +194,7 @@ class DivTest extends \PHPUnit_Framework_TestCase
         $hr = Tag::create('hr/');
         $this->assertEquals('<hr>', $hr->render());
 
-        $h1 = Tag::create('h1', [], 'Title content');
+        $h1 = Tag::create('h1', [ ], 'Title content');
         $this->assertEquals('<h1>Title content</h1>', $h1->render());
     }
 }
