@@ -354,9 +354,9 @@ class Tag
         $attrs  = $this->getValidAttributes();
         ksort($attrs);
         foreach ($attrs as $k => $v) {
-            if ($v !== true && is_string($v)) {
-                $result[] = $k . '="' . $this->escapeAttr($v) . '"';
-            } elseif ($v === true) {
+            if ($v !== true) {
+                $result[] = $k . '="' . $this->escapeAttr((string)$v) . '"';
+            } else {
                 $result[] = $k;
             }
         }
