@@ -351,24 +351,38 @@ class Tag
     protected function getAttributesString()
     {
         $result = array();
-        $props  = $this->getProps();
-        ksort($props);
-        foreach ($props as $k => $v) {
-            if (substr($k, 0, 1) === '_') {
-                continue;
-            }
+        $attrs  = $this->getValidAttributes();
+        ksort($attrs);
+        foreach ($attrs as $k => $v) {
             if ($v !== true && is_string($v)) {
                 $result[] = $k . '="' . $this->escapeAttr($v) . '"';
             } elseif ($v === true) {
                 $result[] = $k;
             }
         }
-        $props = implode(' ', $result);
-        if ($props) {
-            $props = ' ' . $props;
+        $attrs = implode(' ', $result);
+        if ($attrs) {
+            $attrs = ' ' . $attrs;
         }
 
-        return $props;
+        return $attrs;
+    }
+
+    /**
+     * Return the list of valid attributes.
+     * Extend this method to strip out invalid HTML attributes for each tag
+     *
+     * @return array
+     */
+    protected function getValidAttributes() {
+        $attrs = [];
+        foreach ($this->getProps() as $k => $v) {
+            if (substr($k, 0, 1) !== '_') {
+                $attrs[$k] = $v;
+            }
+
+        }
+        return $attrs;
     }
 
     /**
