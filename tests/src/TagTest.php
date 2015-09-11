@@ -182,6 +182,11 @@ class DivTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('<div class="">Lorem ipsum...</div>', (string) $this->element);
     }
 
+    function testNonStringAttribute() {
+        $this->element->set('rows', 5);
+        $this->assertEquals('<div rows="5">Lorem ipsum...</div>', (string) $this->element);
+    }
+
     function testSelfClosingTag()
     {
         $this->assertEquals('<hr class="separator">', new Hr(array(
