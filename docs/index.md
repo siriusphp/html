@@ -9,84 +9,37 @@
 
 Framework agnostic HTML rendering utility with an API inspired by jQuery and React.
 
-
-## Create HTML elements using the builder
-
 ```php
 
 $h = new Sirius\Html\Builder;
+// at this point the builder knows only about the HTML tags defined in the library
+// ie: paragraph, div, radio, select, checkbox, img, textarea etc
 
-// at this point the builder knows only about the HTML tags of the library
-// but you can add custom elements (classes or callbacks)
-$h->registerTag('user-login', 'MyApp\Html\Tag\UserLogin');
-$h->registerTag('app-footer', $someFunctionThatCreatesTags);
+// start writting HTML
+echo $h->make('paragraph', ['href' => 'http://www.bing.com'], 'Go to Bing!']
 
-// the API is like this
-// echo $h->make($tagName, $content, $props)
-// where $props is an array containing
-// 1. the HTML attributes and 
-// 2. other data if the key starts with _
+// or use the power of magic methods
+echo $h->h1(['class' => 'main'], ['Main title', $h->em(null, '!!!')]);
 
-// the props are rendered in HTML tag if they don't start with _
-// so be careful what you put here
-$props = [
-	'id' => 'some-id', 
-	'class' => 'some classes here',
-	'_some_private_data' => 'not treated as attribute'
-];
+// the library is smart enough to handle special requests
+echo $h->someComponent(['class' => 'web-component'], 'content of the component');
+// will render <some-component class="web-component">content of the component</some-component>
 
-// add content to your HTML
-echo $h->make('p', [
-		//  a string
-		'This is a simple paragraph text',
-		// or another HTML element
-		$h->make('div', null, 'A DIV inside A Paragraph? No way!'),
-		// or the stuff required to make another element
-		['strong', [], 'this HTML library is bold']
-	],
-	$props
-);
-
-// the $data contains arbitrary values required for rendering
-// in the case of a SELECT tag the $data will be something like
-$props = [
-	'name' => 'choice',
-	'_first_option' => 'Select from list',
-	'_options' => ['Option 1', 'Option 2', 'Option 3']
-];
-// for FORM elements the $content parameter is the value
-$content = 'Option 2';
-$select = $h->make('select', $content, $props);
-
-
-// you can alter the tag using a jQuery-like API
-$select->toggleClass('some-class');
-$select->set('name', 'selected_option');
-$select->setValue('Option 2');
-
-echo $select;
-
-// custom elements (most likely the custom elements rely only on $data)
-echo $h->make('user-login', null, $someData);
-
-// create HTML tags using the power of __call()
-echo $h->h1('Heading 1');
-echo $h->article(
-	[
-		$h->header([
-			$h->h3('Post title')
-		]),
-		$h->aside('Aside content');
-	],
-	['class' => 'post']
-);
-
-// self-closing tags are like this 
-echo $h->make('hr/', ['class' => 'separator'])
-// this means __call() does not work in this case
 ```
 
-The end goal of the library is composition so you can write your HTML like so
+Build your own HTML components
+
+```php
+
+// register your component as classes or callbacks
+$h->registerTag('my-component', '\\MyProject\\Html\\MyComponent');
+$h->registerTag('my-component', $someCallable);
+
+echo $h->myComponent(null, 'My component content');
+
+```
+
+The end goal of the library is to allow you write compose your HTML views like so
 
 ```php
 

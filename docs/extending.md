@@ -77,7 +77,7 @@ $b = new MyApp\Documentation\Builder;
 $b->classDocumentation(null, 'MyApp\Model\User');
 ```
 
-You can extend the library to generate templates or any other type of output (I know it's sounds crazy but it's not). 
+You can extend the library to generate templates or any other type of output (I know it sounds crazy but it's not).
 
 ```php 
 
