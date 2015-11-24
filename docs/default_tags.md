@@ -13,6 +13,14 @@ echo $h->asdfghij();
 // will output <asdfghij></asdfghij>
 ```
 
+If you need a self-closing tag you need to `make()` it
+
+```php
+
+echo $h->make('hr/'); // see the / at the end
+
+```
+
 Because the form input tags behave differently the library comes packaged with a few tags that have their own classes:
 
 - `input`: the default input tag 

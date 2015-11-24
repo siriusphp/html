@@ -49,7 +49,23 @@ $h->blogPost([
     '_content' => 'Aside content'
 ]);
 ```
+## All tags are builder aware
 
+This means that when they are constructed the builder instance will be passed as the last argument
+
+```php
+
+echo $h->a(['href' => 'http://www.bing.com'], 'Go to Bing!');
+
+// is the same as
+
+echo \Sirius\Html\Tag::create('a', ['href' => 'http://www.bing.com'], 'Go to Bing!', $h)
+```
+
+This is usefull when
+
+1. you're building [custom components](custom_tags.md) that use other custom components
+2. you're styling the components depending on some configuration or you want to [extend the functionality](extending.md) of the library
 
 ## Form input tags are special
 

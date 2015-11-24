@@ -16,7 +16,7 @@ $h = new Sirius\Html\Builder;
 
 $h->registerTag('user-login-form', 'MyApp\Html\Components\UserLoginForm');
 
-echo $h->make('user-login-form', null, ['_form_values' => $_POST]);
+echo $h->make('user-login-form', ['_form_values' => $_POST]);
 ```
 
 which will output something like

@@ -43,7 +43,7 @@ The end goal of the library is to allow you write compose your HTML views like s
 
 ```php
 
-echo $h->make('blog-article', [], ['_entry' => $someBlogPost]);
+echo $h->make('blog-article', ['_entry' => $someBlogPost]);
 
 // which would be equivalent of 
 
