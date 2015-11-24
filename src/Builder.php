@@ -20,13 +20,10 @@ class Builder
     protected $tagFactories = array(
         'button'      => 'Sirius\Html\Tag\Button',
         'checkbox'    => 'Sirius\Html\Tag\Checkbox',
-        'div'         => 'Sirius\Html\Tag\Div',
         'file'        => 'Sirius\Html\Tag\File',
         'hidden'      => 'Sirius\Html\Tag\Hidden',
         'img'         => 'Sirius\Html\Tag\Img',
         'multiselect' => 'Sirius\Html\Tag\MultiSelect',
-        'p'           => 'Sirius\Html\Tag\Paragraph',
-        'paragraph'   => 'Sirius\Html\Tag\Paragraph',
         'password'    => 'Sirius\Html\Tag\Password',
         'radio'       => 'Sirius\Html\Tag\Radio',
         'select'      => 'Sirius\Html\Tag\Select',
