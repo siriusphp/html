@@ -335,7 +335,7 @@ class Tag
             $tagName        = $tagTextOrArray[0];
             $props          = isset($tagTextOrArray[1]) ? $tagTextOrArray[1] : [ ];
             $content        = isset($tagTextOrArray[2]) ? $tagTextOrArray[2] : [ ];
-            $tagTextOrArray = $this->builder->make($tagName, $props, $content, $this->builder);
+            $tagTextOrArray = $this->builder->make($tagName, $props, $content);
         }
 
         array_push($this->content, $tagTextOrArray);
