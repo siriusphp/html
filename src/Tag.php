@@ -101,10 +101,11 @@ class Tag
 
     /**
      *
-     * @param mixed $content
-     *            Content of the HTML element (a string, an array)
      * @param array $props
      *            Additional data for the HTML element (attributes, private data)
+     * @param mixed $content
+     *            Content of the HTML element (a string, an array)
+     * @param Builder $builder
      */
     public function __construct($props = null, $content = null, Builder $builder = null)
     {
