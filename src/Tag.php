@@ -417,7 +417,7 @@ class Tag
     public function render()
     {
         if ($this->isSelfClosing) {
-            $template = "<{$this->tag}%s>";
+            $template = "<{$this->tag}%s />";
             $element  = sprintf($template, $this->getAttributesString());
         } else {
             $template = "<{$this->tag}%s>%s</{$this->tag}>";

@@ -14,7 +14,7 @@ class RadioTest extends \PHPUnit_Framework_TestCase
 
     function testRender()
     {
-        $this->assertEquals('<input checked="checked" name="gender" type="radio" value="male">',
+        $this->assertEquals('<input checked="checked" name="gender" type="radio" value="male" />',
             (string) $this->input);
     }
 }

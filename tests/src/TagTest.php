@@ -3,7 +3,6 @@ namespace Sirius\Html;
 
 class Div extends Tag
 {
-
     protected $tag = 'div';
 
     protected $isSelfClosing = false;
@@ -11,23 +10,21 @@ class Div extends Tag
 
 class Hr extends Tag
 {
-
     protected $tag = 'hr';
 
     protected $isSelfClosing = true;
 }
 
-class DivTest extends \PHPUnit_Framework_TestCase
+class TagTest extends \PHPUnit_Framework_TestCase
 {
-
-    /*
+    /**
      * @var Div
      */
     protected $element;
 
     function setUp()
     {
-        $this->element = new Div([ ], 'Lorem ipsum...');
+        $this->element = new Div(array(), 'Lorem ipsum...');
     }
 
     function testAttributeIsSet()
@@ -189,7 +186,7 @@ class DivTest extends \PHPUnit_Framework_TestCase
 
     function testSelfClosingTag()
     {
-        $this->assertEquals('<hr class="separator">', new Hr(array(
+        $this->assertEquals('<hr class="separator" />', new Hr(array(
             'class' => 'separator'
         )));
     }
@@ -197,9 +194,9 @@ class DivTest extends \PHPUnit_Framework_TestCase
     function testFactory()
     {
         $hr = Tag::create('hr/');
-        $this->assertEquals('<hr>', $hr->render());
+        $this->assertEquals('<hr />', $hr->render());
 
-        $h1 = Tag::create('h1', [ ], 'Title content');
+        $h1 = Tag::create('h1', array(), 'Title content');
         $this->assertEquals('<h1>Title content</h1>', $h1->render());
     }
 }

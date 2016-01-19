@@ -22,7 +22,7 @@ class TextTest extends \PHPUnit_Framework_TestCase
 
     function testRender()
     {
-        $this->assertEquals('<input class="not-valid" disabled name="username" value="siriusforms">',
+        $this->assertEquals('<input class="not-valid" disabled name="username" value="siriusforms" />',
             (string) $this->input);
     }
 }
