@@ -3,7 +3,6 @@ namespace Sirius\Html\Tag;
 
 class MultiSelect extends Select
 {
-
     /**
      * Generates the string with the list of the <OPTIONS> elements
      *

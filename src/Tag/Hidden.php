@@ -3,7 +3,6 @@ namespace Sirius\Html\Tag;
 
 class Hidden extends Input
 {
-
     public function render()
     {
         $this->set('type', 'hidden');
