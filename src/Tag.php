@@ -101,10 +101,11 @@ class Tag
 
     /**
      *
-     * @param mixed $content
-     *            Content of the HTML element (a string, an array)
      * @param array $props
      *            Additional data for the HTML element (attributes, private data)
+     * @param mixed $content
+     *            Content of the HTML element (a string, an array)
+     * @param Builder $builder
      */
     public function __construct($props = null, $content = null, Builder $builder = null)
     {
@@ -334,7 +335,7 @@ class Tag
             $tagName        = $tagTextOrArray[0];
             $props          = isset($tagTextOrArray[1]) ? $tagTextOrArray[1] : [ ];
             $content        = isset($tagTextOrArray[2]) ? $tagTextOrArray[2] : [ ];
-            $tagTextOrArray = $this->builder->make($tagName, $props, $content, $this->builder);
+            $tagTextOrArray = $this->builder->make($tagName, $props, $content);
         }
 
         array_push($this->content, $tagTextOrArray);
@@ -416,7 +417,7 @@ class Tag
     public function render()
     {
         if ($this->isSelfClosing) {
-            $template = "<{$this->tag}%s>";
+            $template = "<{$this->tag}%s />";
             $element  = sprintf($template, $this->getAttributesString());
         } else {
             $template = "<{$this->tag}%s>%s</{$this->tag}>";

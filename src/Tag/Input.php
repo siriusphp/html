@@ -11,7 +11,6 @@ use Sirius\Html\Tag;
  */
 class Input extends Tag
 {
-
     protected $tag = 'input';
 
     protected $isSelfClosing = true;

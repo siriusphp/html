@@ -14,6 +14,6 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
 
     function testRender()
     {
-        $this->assertEquals('<input class="not-valid" name="password" type="password">', (string) $this->input);
+        $this->assertEquals('<input class="not-valid" name="password" type="password" />', (string) $this->input);
     }
 }

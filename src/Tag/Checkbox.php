@@ -3,7 +3,6 @@ namespace Sirius\Html\Tag;
 
 class Checkbox extends Input
 {
-
     public function render()
     {
         $checked = null;

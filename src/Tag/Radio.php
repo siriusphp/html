@@ -3,7 +3,6 @@ namespace Sirius\Html\Tag;
 
 class Radio extends Input
 {
-
     public function render()
     {
         $checked = $this->getValue() == $this->get('value') ? 'checked' : null;

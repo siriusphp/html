@@ -3,7 +3,6 @@ namespace Sirius\Html\Tag;
 
 class Select extends Input
 {
-
     protected $tag = 'select';
 
     protected $isSelfClosing = false;

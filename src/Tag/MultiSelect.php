@@ -3,11 +3,6 @@ namespace Sirius\Html\Tag;
 
 class MultiSelect extends Select
 {
-
-    protected $tag = 'select';
-
-    protected $isSelfClosing = false;
-
     /**
      * Generates the string with the list of the <OPTIONS> elements
      *

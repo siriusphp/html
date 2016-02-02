@@ -156,6 +156,6 @@ class Builder
             $args[2] = null;
         }
 
-        return $this->make($method, $args[0], $args[1], $args[2]);
+        return $this->make($method, $args[0], $args[1]);
     }
 }

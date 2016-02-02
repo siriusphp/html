@@ -19,26 +19,26 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 
     function testCustomTag()
     {
-        $this->assertEquals('<other-tag>Content</other-tag>', $this->builder->make('some-tag', [ ], 'Content')
+        $this->assertEquals('<other-tag>Content</other-tag>', $this->builder->make('some-tag', array(), 'Content')
                                                                             ->render());
     }
 
     function testMagicCall()
     {
-        $this->assertEquals('<other-tag>Content</other-tag>', $this->builder->someTag([ ], 'Content')
+        $this->assertEquals('<other-tag>Content</other-tag>', $this->builder->someTag(array(), 'Content')
                                                                             ->render());
     }
 
     function testRegisteredTag()
     {
-        $this->assertEquals('<img src="some/file.jpg">', $this->builder->img(array(
+        $this->assertEquals('<img src="some/file.jpg" />', $this->builder->img(array(
             'src' => 'some/file.jpg'
         )));
     }
 
     function testNonRegisteredTag()
     {
-        $this->assertEquals('<hr class="separator">', $this->builder->make('hr/', array(
+        $this->assertEquals('<hr class="separator" />', $this->builder->make('hr/', array(
             'class' => 'separator'
         )));
     }
@@ -54,39 +54,39 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 
     function testComplexScenario()
     {
-        $html         = $this->builder->make('form', [
+        $html         = $this->builder->make('form', array(
             'id'    => 'user-add',
             'class' => 'form-horizontal'
-        ], [
-            [
+        ), array(
+            array(
                 'div',
-                [
+                array(
                     'class' => 'form-control'
-                ],
-                [
-                    [
+                ),
+                array(
+                    array(
                         'label',
-                        [ ],
+                        array(),
                         'Username'
-                    ],
-                    [
+                    ),
+                    array(
                         'input',
-                        [
+                        array(
                             'type' => 'text'
-                        ],
+                        ),
                         'my_username'
-                    ],
-                    [
+                    ),
+                    array(
                         'div',
-                        [
+                        array(
                             'class' => 'form-help'
-                        ],
+                        ),
                         'Enter your desired username'
-                    ]
-                ]
-            ]
+                    )
+                )
+            )
 
-        ]);
+        ));
         $renderedHtml = $html->render();
         $this->assertTrue(strpos($renderedHtml, '<div class="form-help">') !== false);
         $this->assertTrue(strpos($renderedHtml, '<label>Username') !== false);

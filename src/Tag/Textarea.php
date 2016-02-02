@@ -3,7 +3,6 @@ namespace Sirius\Html\Tag;
 
 class Textarea extends Input
 {
-
     protected $tag = 'textarea';
 
     protected $isSelfClosing = false;
