@@ -351,41 +351,22 @@ class Tag
      */
     protected function getAttributesString()
     {
-        $result = array();
-        $attrs  = $this->getValidAttributes();
-        ksort($attrs);
-        foreach ($attrs as $k => $v) {
-            if ($v !== true) {
-                $result[] = $k . '="' . $this->escapeAttr((string)$v) . '"';
-            } else {
-                $result[] = $k;
-            }
-        }
-        $attrs = implode(' ', $result);
-        if ($attrs) {
-            $attrs = ' ' . $attrs;
-        }
-
-        return $attrs;
-    }
-
-    /**
-     * Return the list of valid attributes.
-     * Extend this method to strip out invalid HTML attributes for each tag
-     *
-     * @return array
-     */
-    protected function getValidAttributes()
-    {
-        $attrs = [ ];
-        foreach ($this->getProps() as $k => $v) {
+        $result = '';
+        ksort($this->props);
+        foreach ($this->props as $k => $v) {
             if (substr($k, 0, 1) !== '_') {
-                $attrs[$k] = $v;
+                if ($v === true) {
+                    $result .= $k . ' ';
+                } else {
+                    $result .= $k . '="' . $this->escapeAttr($v) . '" ';
+                }
             }
-
+        }
+        if ($result) {
+            $result = ' ' . trim($result);
         }
 
-        return $attrs;
+        return $result;
     }
 
     /**
@@ -417,14 +398,12 @@ class Tag
     public function render()
     {
         if ($this->isSelfClosing) {
-            $template = "<{$this->tag}%s />";
-            $element  = sprintf($template, $this->getAttributesString());
+            $element = "<{$this->tag}".$this->getAttributesString()." />";
         } else {
-            $template = "<{$this->tag}%s>%s</{$this->tag}>";
-            $element  = sprintf($template, $this->getAttributesString(), $this->getInnerHtml());
+            $element = "<{$this->tag}".$this->getAttributesString().">".$this->getInnerHtml()."</{$this->tag}>";
         }
-        $before = implode(PHP_EOL, $this->before);
-        $after  = implode(PHP_EOL, $this->after);
+        $before = !empty($this->before) ? implode(PHP_EOL, $this->before) : '';
+        $after  = !empty($this->after) ? implode(PHP_EOL, $this->after) : '';
 
         return $before . $element . $after;
     }
