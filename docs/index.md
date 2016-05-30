@@ -48,7 +48,8 @@ echo $h->make('blog-article', ['_entry' => $someBlogPost]);
 // which would be equivalent of 
 
 echo $h->make(
-	'article', 
+	'article',
+    ['class' => 'post post-123 post-story'], 
 	[
 		['heading', $post->post_name],
 		['section', $post->content],
@@ -59,8 +60,7 @@ echo $h->make(
 				// ... you can guess what happens here 
 			]]
 		]]
-	],
-	['class' => 'post post-123 post-story']	
+	]	
 );
 ```
 

@@ -10,3 +10,4 @@ build/
 # composer.lock
 docs/couscous.phar
 docs/.couscous/
+.idea/
