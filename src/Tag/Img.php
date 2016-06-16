@@ -9,7 +9,7 @@ class Img extends Tag
 
     protected $isSelfClosing = true;
 
-    function setContent($content)
+    public function setContent($content)
     {
         return $this->set('src', $content);
     }

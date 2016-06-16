@@ -84,7 +84,7 @@ class Tag
      *
      * @return Tag
      */
-    static public function create($tag, $props = null, $content = null, Builder $builder = null)
+    public static function create($tag, $props = null, $content = null, Builder $builder = null)
     {
         $widget = new static($props, $content, $builder);
         if (substr($tag, - 1) === '/') {
@@ -127,7 +127,7 @@ class Tag
      */
     public function setProps($props)
     {
-        if ( ! is_array($props) && ! ($props instanceof \Traversable)) {
+        if (! is_array($props) && ! ($props instanceof \Traversable)) {
             return $this;
         }
         foreach ($props as $name => $value) {
@@ -218,7 +218,7 @@ class Tag
      */
     public function addClass($class)
     {
-        if ( ! $this->hasClass($class)) {
+        if (! $this->hasClass($class)) {
             $this->set('class', trim((string) $this->get('class') . ' ' . $class));
         }
 
@@ -282,10 +282,10 @@ class Tag
      */
     public function setContent($content)
     {
-        if ( ! $content) {
+        if (! $content) {
             return $this;
         }
-        if ( ! is_array($content)) {
+        if (! is_array($content)) {
             $content = array( $content );
         }
         $this->clearContent();
@@ -327,8 +327,7 @@ class Tag
     {
         // a list of arguments to be passed to builder->make()
         if (is_array($tagTextOrArray) && ! empty($tagTextOrArray)) {
-
-            if ( ! isset($this->builder)) {
+            if (! isset($this->builder)) {
                 throw new \InvalidArgumentException(sprintf('Builder not attached to tag `%s`', $this->tag));
             }
 
@@ -383,7 +382,7 @@ class Tag
         }
 
         // Don't bother if there are no specialchars - saves some processing
-        if ( ! preg_match('/[&<>"\']/', $attr)) {
+        if (! preg_match('/[&<>"\']/', $attr)) {
             return $attr;
         }
 
@@ -493,4 +492,3 @@ class Tag
         return $this->before($before)->after($after);
     }
 }
-

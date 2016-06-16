@@ -35,5 +35,4 @@ class Select extends Input
     {
         return $this->getOptionsString();
     }
-
 }

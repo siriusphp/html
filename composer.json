@@ -19,11 +19,16 @@
         "php": ">=5.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.8"
+        "phpunit/phpunit": "~4.8",
+        "squizlabs/php_codesniffer": "^2.6"
     },
     "autoload": {
         "psr-4": {
             "Sirius\\Html\\": "src/"
         }
+    },
+    "scripts": {
+        "cs": "phpcs --standard=PSR2 src/",
+        "cbf": "phpcbf --standard=PSR2 src/"
     }
 }

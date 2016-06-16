@@ -106,7 +106,7 @@ class Builder
      */
     public function make($tag, $props = null, $content = null)
     {
-        if ( ! isset($this->tagFactories[$tag])) {
+        if (! isset($this->tagFactories[$tag])) {
             return Tag::create($tag, $props, $content, $this);
         }
 
@@ -120,9 +120,11 @@ class Builder
             $tag = new $constructor($props, $content, $this);
         }
 
-        if ( ! $tag || ! $tag instanceof Tag) {
-            throw  new \InvalidArgumentException(sprintf('The constructor for the `%s` tag did not generate a Tag object',
-                $tag));
+        if (! $tag || ! $tag instanceof Tag) {
+            throw  new \InvalidArgumentException(sprintf(
+                'The constructor for the `%s` tag did not generate a Tag object',
+                $tag
+            ));
         }
 
         return $tag;
@@ -134,7 +136,9 @@ class Builder
      *
      * @example
      * $builder->h1(null, 'Heading 1'); // <h1>Heading 1</h1>
-     * $builder->article(['class' => 'post-body'], 'Article body'); // '<article class='post-body'>Article body</article>
+     * $builder->article(['class' => 'post-body'], 'Article body');
+     * // outputs: '<article class='post-body'>Article body</article>
+     *
      * $builder->someTag(); // <some-tag></some-tag>
      *
      * @param string $method
@@ -146,13 +150,13 @@ class Builder
     {
         $method = preg_replace('/([A-Z]+)/', '-\1', $method);
         $method = strtolower($method);
-        if ( ! isset($args[0])) {
+        if (! isset($args[0])) {
             $args[0] = array();
         }
-        if ( ! isset($args[1])) {
+        if (! isset($args[1])) {
             $args[1] = null;
         }
-        if ( ! isset($args[2])) {
+        if (! isset($args[2])) {
             $args[2] = null;
         }
 
