@@ -36,6 +36,6 @@ which will output something like
 
 ## Links
 
-- [documentation](http://www.sirius.ro/php/sirius/html)
+- [documentation](http://sirius.ro/php/sirius/html)
 - [changelog](CHANGELOG.md)
 
