@@ -345,7 +345,7 @@ class Tag implements \Stringable
     /**
      * Add a string or a stringifiable object immediately as the first child of the element
      *
-     * @param string|object $stringOrObject
+     * @param string|\Stringable $stringOrObject
      *
      * @return Tag
      */
@@ -359,7 +359,7 @@ class Tag implements \Stringable
     /**
      * Add a string or a stringifiable object as the last child the element
      *
-     * @param string|object $stringOrObject
+     * @param string|\Stringable $stringOrObject
      *
      * @return Tag
      */
