@@ -1,0 +1,11 @@
+<form method="post" action="{{form_url | escape('html_attr')  }}">
+
+    {% for input_name, field in fields %}
+        <div class="{{classes.form_group | escape('html_attr')  }}">
+            <label class="{{classes.form_label | escape('html_attr')  }}">{{field.label}}</label>
+            <input type="text" name="{{input_name | escape('html_attr')  }}" value="{{field.value | escape('html_attr')  }}" class="{{classes.form_control | escape('html_attr')  }}">
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="{{classes.submit | escape('html_attr')  }}">Submit</button>
+</form>

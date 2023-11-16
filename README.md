@@ -34,8 +34,21 @@ which will output something like
 </form>
 ```
 
+### Performance
+
+There is a simple [benchmark](tests/benchmark/) that renders a form with 4 fields and a button. Compared to Twig, Sirius HTML is 50% slower but uses 2x less memory.
+
+The benchmark results are as follows for 100K iterations:
+
+| Library     |  Time | Memory |
+|-------------|------:|-------:|
+| Sirius HTML | 1.78s |    2Mb |
+| Twig        | 1.14s |    4Mb |
+
+Of course, this is not a real world scenario, but it gives you an idea of what to expect from this library.
+
+
 ## Links
 
 - [documentation](http://sirius.ro/php/sirius/html)
-- [changelog](CHANGELOG.md)
 

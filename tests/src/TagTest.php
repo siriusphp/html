@@ -67,13 +67,6 @@ test('attribute is unset', function () {
     ));
 });
 
-test('attribute name is cleaned', function () {
-    $this->element->set('@name#', 'name');
-    expect($this->element->getProps())->toEqual(array(
-        'name' => 'name'
-    ));
-});
-
 test('add class', function () {
     $this->element->addClass('active');
     expect($this->element->get('class'))->toEqual('active');

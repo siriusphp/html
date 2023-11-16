@@ -102,7 +102,6 @@ class Tag implements \Stringable
 
     public function set(string $name, mixed $value = null): static
     {
-        $name = $this->cleanAttributeName($name);
         if ($value === null && isset($this->props[$name])) {
             unset($this->props[$name]);
         } elseif ($value !== null) {
@@ -110,16 +109,6 @@ class Tag implements \Stringable
         }
 
         return $this;
-    }
-
-    protected function cleanAttributeName(string $name): string
-    {
-        // private attributes are allowed to have any form
-        if (str_starts_with($name, '_')) {
-            return $name;
-        }
-
-        return (string) preg_replace('/[^a-zA-Z0-9-]+/', '', $name);
     }
 
     /**
@@ -146,8 +135,6 @@ class Tag implements \Stringable
      */
     public function get(string $name): mixed
     {
-        $name = $this->cleanAttributeName($name);
-
         return $this->props[$name] ?? null;
     }
 
@@ -378,7 +365,7 @@ class Tag implements \Stringable
      */
     public function append($stringOrObject)
     {
-        array_push($this->content, $stringOrObject);
+        $this->content[] = $stringOrObject;
 
         return $this;
     }

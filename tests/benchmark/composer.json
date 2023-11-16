@@ -1,0 +1,12 @@
+{
+    "name": "siriusphp/html-benchmark",
+    "require": {
+        "twig/twig": "^3.7"
+    },
+    "authors": [
+        {
+            "name": "Adrian Miu",
+            "email": "adrian@adrianmiu.ro"
+        }
+    ]
+}
