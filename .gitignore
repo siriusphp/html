@@ -1,6 +1,7 @@
 composer.phar
 vendor/
 build/
+tests/benchmark/twig/cache/
 .settings/
 .buildpath
 .project
