@@ -21,7 +21,7 @@ jobs:
           host: ${{ secrets.DOCS_FTP_HOST }}
           username: ${{ secrets.DOCS_FTP_USER }}
           password: ${{ secrets.DOCS_FTP_PASSWORD }}
-          remote_folder: invokator
+          remote_folder: html
           # The local folder location
           local_folder: build/docs/
           # Remove existing files inside FTP remote folder
