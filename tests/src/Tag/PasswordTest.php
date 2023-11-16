@@ -1,19 +1,14 @@
 <?php
-namespace Sirius\Html\Tag;
 
-class PasswordTest extends \PHPUnit_Framework_TestCase
-{
+use \Sirius\Html\Tag\Password;
 
-    function setUp()
-    {
-        $this->input = new Password(array(
-            'name'  => 'password',
-            'class' => 'not-valid'
-        ), '0123456');
-    }
+beforeEach(function () {
+    $this->input = new Password(array(
+        'name'  => 'password',
+        'class' => 'not-valid'
+    ), '0123456');
+});
 
-    function testRender()
-    {
-        $this->assertEquals('<input class="not-valid" name="password" type="password" />', (string) $this->input);
-    }
-}
+test('render', function () {
+    expect((string) $this->input)->toEqual('<input class="not-valid" name="password" type="password" />');
+});

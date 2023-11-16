@@ -1,75 +1,56 @@
 <?php
+
 namespace Sirius\Html;
 
 class Builder
 {
-
-    /**
-     * A list of configuration parameters that can be used
-     * by tags, decorators etc when rendering
-     *
-     * @var array
-     */
-    protected $options = array();
-
     /**
      * tag-to-class name mappings
      *
-     * @var array
+     * @var array<string,class-string|callable():Tag|\Closure>
      */
-    protected $tagFactories = array(
-        'button'      => 'Sirius\Html\Tag\Button',
-        'checkbox'    => 'Sirius\Html\Tag\Checkbox',
-        'file'        => 'Sirius\Html\Tag\File',
-        'hidden'      => 'Sirius\Html\Tag\Hidden',
-        'img'         => 'Sirius\Html\Tag\Img',
-        'multiselect' => 'Sirius\Html\Tag\MultiSelect',
-        'password'    => 'Sirius\Html\Tag\Password',
-        'radio'       => 'Sirius\Html\Tag\Radio',
-        'select'      => 'Sirius\Html\Tag\Select',
-        'text'        => 'Sirius\Html\Tag\Text',
-        'textarea'    => 'Sirius\Html\Tag\Textarea'
-    );
+    protected array $tagFactories = [
+        'button'      => \Sirius\Html\Tag\Button::class,
+        'checkbox'    => \Sirius\Html\Tag\Checkbox::class,
+        'file'        => \Sirius\Html\Tag\File::class,
+        'hidden'      => \Sirius\Html\Tag\Hidden::class,
+        'img'         => \Sirius\Html\Tag\Img::class,
+        'multiselect' => \Sirius\Html\Tag\MultiSelect::class,
+        'password'    => \Sirius\Html\Tag\Password::class,
+        'radio'       => \Sirius\Html\Tag\Radio::class,
+        'select'      => \Sirius\Html\Tag\Select::class,
+        'text'        => \Sirius\Html\Tag\Text::class,
+        'textarea'    => \Sirius\Html\Tag\Textarea::class
+    ];
 
     /**
-     * @param array $options
+     * @param array<string,mixed> $options
      */
-    public function __construct($options = array())
-    {
-        $this->options = $options;
+    public function __construct(
+        /**
+         * A list of configuration parameters that can be used
+         * by tags, decorators etc when rendering
+         */
+        protected array $options = []
+    ) {
     }
 
-    /**
-     * Sets a value of an option
-     *
-     * @param $name
-     * @param $value
-     */
-    public function setOption($name, $value)
+    public function setOption(string $name, mixed $value): void
     {
         $this->options[$name] = $value;
     }
 
-    /**
-     * Get a configuration option
-     *
-     * @param $name
-     *
-     * @return null
-     */
-    public function getOption($name)
+    public function getOption(string $name): mixed
     {
-        return isset($this->options[$name]) ? $this->options[$name] : null;
+        return $this->options[$name] ?? null;
     }
 
     /**
      * Clones the instance and applies new set of options
      *
-     * @param $options
-     *
-     * @return Builder
+     * @param array<string,mixed> $options
      */
-    public function with($options)
+    public function with(array $options): static
     {
         $clone = clone $this;
         foreach ($options as $name => $value) {
@@ -80,14 +61,9 @@ class Builder
     }
 
     /**
-     * Add an element factory (class or callback)
-     *
-     * @param string $name
-     * @param mixed $classOrCallback
-     *
-     * @return self
+     * @param class-string|callable():Tag|\Closure():Tag $classOrCallback
      */
-    public function registerTag($name, $classOrCallback)
+    public function registerTag(string $name, mixed $classOrCallback): self
     {
         $this->tagFactories[$name] = $classOrCallback;
 
@@ -98,29 +74,28 @@ class Builder
      * Make an HTML tag with a specific tag name (div, p, section etc)
      *
      * @param string $tag
-     * @param mixed $props
-     * @param mixed $content
+     * @param array<string,mixed> $props
+     * @param array<int, string|\Stringable>|string|null $content
      *
      * @throws \InvalidArgumentException
-     * @return Tag
      */
-    public function make($tag, $props = null, $content = null)
+    public function make($tag, array $props = [], mixed $content = null): Tag
     {
-        if (! isset($this->tagFactories[$tag])) {
+        if ( ! isset($this->tagFactories[$tag])) {
             return Tag::create($tag, $props, $content, $this);
         }
 
-        $constructor = $this->tagFactories[$tag];
+        $factory = $this->tagFactories[$tag];
 
-        if (is_callable($constructor)) {
+        if (is_callable($factory)) {
             /* @var $tag Tag */
-            $tag = call_user_func($constructor, $props, $content, $this);
-        } elseif (is_string($constructor) && class_exists($constructor)) {
+            $tag = call_user_func($factory, $props, $content, $this);
+        } elseif (is_string($factory) && class_exists($factory)) {
             /* @var $tag Tag */
-            $tag = new $constructor($props, $content, $this);
+            $tag = new $factory($props, $content, $this);
         }
 
-        if (! $tag || ! $tag instanceof Tag) {
+        if ( ! $tag || ! $tag instanceof Tag) {
             throw  new \InvalidArgumentException(sprintf(
                 'The constructor for the `%s` tag did not generate a Tag object',
                 $tag
@@ -134,6 +109,10 @@ class Builder
     /**
      * Magic method for creating HTML tags
      *
+     * @param string $method
+     * @param array<int,mixed> $args
+     *
+     * @return Tag
      * @example
      * $builder->h1(null, 'Heading 1'); // <h1>Heading 1</h1>
      * $builder->article(['class' => 'post-body'], 'Article body');
@@ -141,25 +120,22 @@ class Builder
      *
      * $builder->someTag(); // <some-tag></some-tag>
      *
-     * @param string $method
-     * @param array $args
-     *
-     * @return Tag
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         $method = preg_replace('/([A-Z]+)/', '-\1', $method);
-        $method = strtolower($method);
-        if (! isset($args[0])) {
-            $args[0] = array();
+        $method = strtolower((string) $method);
+        if ( ! isset($args[0])) {
+            $args[0] = [];
         }
-        if (! isset($args[1])) {
-            $args[1] = null;
+        if ( ! isset($args[1])) {
+            $args[1] = [];
         }
-        if (! isset($args[2])) {
+        if ( ! isset($args[2])) {
             $args[2] = null;
         }
 
-        return $this->make($method, $args[0], $args[1]);
+        // @phpstan-ignore-next-line
+        return $this->make($method, (array) $args[0], (array) $args[1]);
     }
 }

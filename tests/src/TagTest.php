@@ -1,202 +1,179 @@
 <?php
 namespace Sirius\Html;
+use \Sirius\Html\Tag;
+use \Sirius\Html\Hr;
+use \Sirius\Html\Div;
+use Tests\TestCase;
+
+uses(TestCase::class);
 
 class Div extends Tag
 {
-    protected $tag = 'div';
+    protected string $tag = 'div';
 
-    protected $isSelfClosing = false;
+    protected bool $isSelfClosing = false;
 }
 
 class Hr extends Tag
 {
-    protected $tag = 'hr';
+    protected string $tag = 'hr';
 
-    protected $isSelfClosing = true;
+    protected bool $isSelfClosing = true;
 }
 
-class TagTest extends \PHPUnit_Framework_TestCase
-{
-    /**
-     * @var Div
-     */
-    protected $element;
+beforeEach(function () {
+    $this->element = new Div(array(), 'Lorem ipsum...');
+});
 
-    function setUp()
-    {
-        $this->element = new Div(array(), 'Lorem ipsum...');
-    }
+test('attribute is set', function () {
+    $this->element->set('name', 'email');
+    expect($this->element->get('name'))->toEqual('email');
+});
 
-    function testAttributeIsSet()
-    {
-        $this->element->set('name', 'email');
-        $this->assertEquals('email', $this->element->get('name'));
-    }
+test('attribute list is retrieved', function () {
+    $attrs = array(
+        'name'  => 'email',
+        'value' => 'me@domain.com',
+        'id'    => 'form-email'
+    );
+    $this->element->setProps($attrs);
+    expect($this->element->getProps(array(
+        'name',
+        'value'
+    )))->toEqual(array(
+        'name'  => 'email',
+        'value' => 'me@domain.com'
+    ));
+});
 
-    function testAttributeListIsRetrieved()
-    {
-        $attrs = array(
-            'name'  => 'email',
-            'value' => 'me@domain.com',
-            'id'    => 'form-email'
-        );
-        $this->element->setProps($attrs);
-        $this->assertEquals(array(
-            'name'  => 'email',
-            'value' => 'me@domain.com'
-        ), $this->element->getProps(array(
-            'name',
-            'value'
-        )));
-    }
+test('all attributes are retrieved', function () {
+    $attrs = array(
+        'name'  => 'email',
+        'value' => 'me@domain.com'
+    );
+    $this->element->setProps($attrs);
+    expect($this->element->getProps())->toEqual($attrs);
+});
 
-    function testAllAttributesAreRetrieved()
-    {
-        $attrs = array(
-            'name'  => 'email',
-            'value' => 'me@domain.com'
-        );
-        $this->element->setProps($attrs);
-        $this->assertEquals($attrs, $this->element->getProps());
-    }
+test('attribute is unset', function () {
+    $attrs = array(
+        'name'  => 'email',
+        'value' => 'me@domain.com'
+    );
+    $this->element->setProps($attrs);
+    $this->element->set('value', null);
+    expect($this->element->getProps())->toEqual(array(
+        'name' => 'email'
+    ));
+});
 
-    function testAttributeIsUnset()
-    {
-        $attrs = array(
-            'name'  => 'email',
-            'value' => 'me@domain.com'
-        );
-        $this->element->setProps($attrs);
-        $this->element->set('value', null);
-        $this->assertEquals(array(
-            'name' => 'email'
-        ), $this->element->getProps());
-    }
+test('attribute name is cleaned', function () {
+    $this->element->set('@name#', 'name');
+    expect($this->element->getProps())->toEqual(array(
+        'name' => 'name'
+    ));
+});
 
-    function testAttributeNameIsCleaned()
-    {
-        $this->element->set('@name#', 'name');
-        $this->assertEquals(array(
-            'name' => 'name'
-        ), $this->element->getProps());
-    }
+test('add class', function () {
+    $this->element->addClass('active');
+    expect($this->element->get('class'))->toEqual('active');
 
-    function testAddClass()
-    {
-        $this->element->addClass('active');
-        $this->assertEquals('active', $this->element->get('class'));
+    $this->element->addClass('disabled');
+    expect($this->element->get('class'))->toEqual('active disabled');
+});
 
-        $this->element->addClass('disabled');
-        $this->assertEquals('active disabled', $this->element->get('class'));
-    }
+test('has class', function () {
+    $this->element->set('class', 'active disabled even');
+    expect($this->element->hasClass('active'))->toBeTrue();
+    expect($this->element->hasClass('disabled'))->toBeTrue();
+    expect($this->element->hasClass('even'))->toBeTrue();
+    expect($this->element->hasClass('xdisabled'))->toBeFalse();
+});
 
-    function testHasClass()
-    {
-        $this->element->set('class', 'active disabled even');
-        $this->assertTrue($this->element->hasClass('active'));
-        $this->assertTrue($this->element->hasClass('disabled'));
-        $this->assertTrue($this->element->hasClass('even'));
-        $this->assertFalse($this->element->hasClass('xdisabled'));
-    }
+test('remove class', function () {
+    $this->element->set('class', 'active disabled even');
+    $this->element->removeClass('disabled');
+    expect($this->element->hasClass('disabled'))->toBeFalse();
+});
 
-    function testRemoveClass()
-    {
-        $this->element->set('class', 'active disabled even');
-        $this->element->removeClass('disabled');
-        $this->assertFalse($this->element->hasClass('disabled'));
-    }
+test('toggle class', function () {
+    expect($this->element->hasClass('active'))->toBeFalse();
+    $this->element->toggleClass('active');
+    expect($this->element->hasClass('active'))->toBeTrue();
+    $this->element->toggleClass('active');
+    expect($this->element->hasClass('active'))->toBeFalse();
+});
 
-    function testToggleClass()
-    {
-        $this->assertFalse($this->element->hasClass('active'));
-        $this->element->toggleClass('active');
-        $this->assertTrue($this->element->hasClass('active'));
-        $this->element->toggleClass('active');
-        $this->assertFalse($this->element->hasClass('active'));
-    }
+test('previous content is overwritten', function () {
+    $this->element->setContent('cool');
+    expect($this->element->getInnerHtml())->toEqual('cool');
+});
 
-    function testPreviousContentIsOverwritten()
-    {
-        $this->element->setContent('cool');
-        $this->assertEquals('cool', $this->element->getInnerHtml());
-    }
+test('content array', function () {
+    $this->element->setContent(array(
+        'a',
+        'b',
+        'c'
+    ));
+    expect($this->element->render())->toEqual('<div>a' . PHP_EOL . 'b' . PHP_EOL . 'c</div>');
+});
 
-    function testContentArray()
-    {
-        $this->element->setContent(array(
-            'a',
-            'b',
-            'c'
-        ));
-        $this->assertEquals('<div>a' . PHP_EOL . 'b' . PHP_EOL . 'c</div>', $this->element->render());
-    }
+test('render', function () {
+    $this->element->addClass('container');
+    expect((string) $this->element)->toEqual('<div class="container">Lorem ipsum...</div>');
+    expect($this->element->render())->toEqual('<div class="container">Lorem ipsum...</div>');
+});
 
-    function testRender()
-    {
-        $this->element->addClass('container');
-        $this->assertEquals('<div class="container">Lorem ipsum...</div>', (string) $this->element);
-        $this->assertEquals('<div class="container">Lorem ipsum...</div>', $this->element->render());
-    }
+test('wrap', function () {
+    $this->element->addClass('container');
+    $this->element->after('<i class="icon-date"></i>');
+    $this->element->wrap('<div class="wrapper">', '</div>');
+    expect(strpos($this->element->render(),
+            '<div class="wrapper"><div class="container">Lorem ipsum...</div>') !== false)->toBeTrue();
+    expect(strpos($this->element->render(), '</div><i class="icon-date"></i>') !== false)->toBeTrue();
+});
 
-    function testWrap()
-    {
-        $this->element->addClass('container');
-        $this->element->after('<i class="icon-date"></i>');
-        $this->element->wrap('<div class="wrapper">', '</div>');
-        $this->assertTrue(strpos($this->element->render(),
-                '<div class="wrapper"><div class="container">Lorem ipsum...</div>') !== false);
-        $this->assertTrue(strpos($this->element->render(), '</div><i class="icon-date"></i>') !== false);
-    }
+test('append', function () {
+    $this->element->clearContent();
+    $this->element->append('<article>Article</article>');
+    $this->element->append('<aside>Aside</aside>');
+    expect(strpos($this->element->getInnerHtml(),
+            '<article') < strpos($this->element->getInnerHtml(), '<aside'))->toBeTrue();
+});
 
-    function testAppend()
-    {
-        $this->element->clearContent();
-        $this->element->append('<article>Article</article>');
-        $this->element->append('<aside>Aside</aside>');
-        $this->assertTrue(strpos($this->element->getInnerHtml(),
-                '<article') < strpos($this->element->getInnerHtml(), '<aside'));
-    }
+test('prepend', function () {
+    $this->element->clearContent();
+    $this->element->prepend('<article>Article</article>');
+    $this->element->prepend('<aside>Aside</aside>');
+    expect(strpos($this->element->getInnerHtml(),
+            '<article') > strpos($this->element->getInnerHtml(), '<aside'))->toBeTrue();
+});
 
-    function testPrepend()
-    {
-        $this->element->clearContent();
-        $this->element->prepend('<article>Article</article>');
-        $this->element->prepend('<aside>Aside</aside>');
-        $this->assertTrue(strpos($this->element->getInnerHtml(),
-                '<article') > strpos($this->element->getInnerHtml(), '<aside'));
-    }
+test('special attributes characters', function () {
+    $this->element->set('class', '<weird>"characters"');
+    expect((string) $this->element)->toEqual('<div class="&lt;weird&gt;&quot;characters&quot;">Lorem ipsum...</div>');
+});
 
-    function testSpecialAttributesCharacters()
-    {
-        $this->element->set('class', '<weird>"characters"');
-        $this->assertEquals('<div class="&lt;weird&gt;&quot;characters&quot;">Lorem ipsum...</div>',
-            (string) $this->element);
-    }
+test('empty attribute', function () {
+    $this->element->set('class', '');
+    expect((string) $this->element)->toEqual('<div class="">Lorem ipsum...</div>');
+});
 
-    function testEmptyAttribute()
-    {
-        $this->element->set('class', '');
-        $this->assertEquals('<div class="">Lorem ipsum...</div>', (string) $this->element);
-    }
+test('non string attribute', function () {
+    $this->element->set('rows', 5);
+    expect((string) $this->element)->toEqual('<div rows="5">Lorem ipsum...</div>');
+});
 
-    function testNonStringAttribute() {
-        $this->element->set('rows', 5);
-        $this->assertEquals('<div rows="5">Lorem ipsum...</div>', (string) $this->element);
-    }
+test('self closing tag', function () {
+    expect(new Hr(array(
+        'class' => 'separator'
+    )))->toEqual('<hr class="separator" />');
+});
 
-    function testSelfClosingTag()
-    {
-        $this->assertEquals('<hr class="separator" />', new Hr(array(
-            'class' => 'separator'
-        )));
-    }
+test('factory', function () {
+    $hr = Tag::create('hr/');
+    expect($hr->render())->toEqual('<hr />');
 
-    function testFactory()
-    {
-        $hr = Tag::create('hr/');
-        $this->assertEquals('<hr />', $hr->render());
-
-        $h1 = Tag::create('h1', array(), 'Title content');
-        $this->assertEquals('<h1>Title content</h1>', $h1->render());
-    }
-}
+    $h1 = Tag::create('h1', array(), 'Title content');
+    expect($h1->render())->toEqual('<h1>Title content</h1>');
+});

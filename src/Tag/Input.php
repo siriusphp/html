@@ -1,4 +1,5 @@
 <?php
+
 namespace Sirius\Html\Tag;
 
 use Sirius\Html\Tag;
@@ -11,38 +12,26 @@ use Sirius\Html\Tag;
  */
 class Input extends Tag
 {
-    protected $tag = 'input';
+    protected string $tag = 'input';
 
-    protected $isSelfClosing = true;
+    protected bool $isSelfClosing = true;
 
-    /**
-     * Set value of the input element
-     *
-     * @param string $val
-     *
-     * @return self
-     */
-    public function setValue($val)
+    public function setValue(mixed $val): static
     {
-        $this->set('_value', $val);
+        return $this->set('_value', $val);
     }
 
-    /**
-     * Get value of the input element
-     *
-     * @return string
-     */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->get('_value');
     }
 
-    public function setContent($content)
+    public function setContent(mixed $content): static
     {
         return $this->setValue($content);
     }
 
-    public function getContent()
+    public function getContent(): mixed
     {
         return $this->getValue();
     }

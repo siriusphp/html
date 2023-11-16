@@ -1,40 +1,35 @@
 <?php
-namespace Sirius\Html\Tag;
 
-class CheckboxTest extends \PHPUnit_Framework_TestCase
-{
+use \Sirius\Html\Tag\Checkbox;
+use Tests\TestCase;
 
-    function setUp()
-    {
-        $this->input = new Checkbox(array(
-            'name'  => 'agree_to_terms',
-            'value' => 'yes'
-        ), 'yes');
-    }
+uses(TestCase::class);
 
-    function testRender()
-    {
-        $this->assertEquals('<input checked="checked" name="agree_to_terms" type="checkbox" value="yes" />',
-            (string) $this->input);
+beforeEach(function () {
+    $this->input = new Checkbox(array(
+        'name'  => 'agree_to_terms',
+        'value' => 'yes'
+    ), 'yes');
+});
 
-        // change value
-        $this->input->setValue('no');
-        $this->assertEquals('<input name="agree_to_terms" type="checkbox" value="yes" />', (string) $this->input);
-    }
+test('render', function () {
+    expect((string) $this->input)->toEqual('<input checked="checked" name="agree_to_terms" type="checkbox" value="yes" />');
 
-    function testMultipleValues()
-    {
-        $this->input->setValue(array(
-            'yes',
-            'maybe'
-        ));
-        $this->assertEquals('<input checked="checked" name="agree_to_terms" type="checkbox" value="yes" />',
-            (string) $this->input);
+    // change value
+    $this->input->setValue('no');
+    expect((string) $this->input)->toEqual('<input name="agree_to_terms" type="checkbox" value="yes" />');
+});
 
-        $this->input->setValue(array(
-            'no',
-            'maybe'
-        ));
-        $this->assertEquals('<input name="agree_to_terms" type="checkbox" value="yes" />', (string) $this->input);
-    }
-}
+test('multiple values', function () {
+    $this->input->setValue(array(
+        'yes',
+        'maybe'
+    ));
+    expect((string) $this->input)->toEqual('<input checked="checked" name="agree_to_terms" type="checkbox" value="yes" />');
+
+    $this->input->setValue(array(
+        'no',
+        'maybe'
+    ));
+    expect((string) $this->input)->toEqual('<input name="agree_to_terms" type="checkbox" value="yes" />');
+});

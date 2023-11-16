@@ -1,16 +1,20 @@
 <?php
+
 namespace Sirius\Html\Tag;
 
 use Sirius\Html\Tag;
 
 class Img extends Tag
 {
-    protected $tag = 'img';
+    protected string $tag = 'img';
 
-    protected $isSelfClosing = true;
+    protected bool $isSelfClosing = true;
 
-    public function setContent($content)
+    public function setContent(mixed $content): static
     {
+        if (empty($content)) {
+            return $this;
+        }
         return $this->set('src', $content);
     }
 }

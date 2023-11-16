@@ -1,4 +1,5 @@
 <?php
+
 namespace Sirius\Html;
 
 /**
@@ -9,66 +10,39 @@ namespace Sirius\Html;
  * - before(): add something before the element
  * - after(): add something after the element;
  */
-class Tag
+class Tag implements \Stringable
 {
-
     /**
      * Items (strings) to be added before the element
      *
-     * @var array
+     * @var array<int,string|Tag>
      */
-    protected $before = array();
+    protected array $before = [];
 
     /**
      * Items (strings) to be added after the element
      *
-     * @var array
+     * @var array<int,string|Tag>
      */
-    protected $after = array();
+    protected array $after = [];
+
+    protected string $tag = 'div';
+
+    protected bool $isSelfClosing = false;
 
     /**
-     * The HTML tag
-     *
-     * @var string
+     * @var array<string,mixed>
      */
-    protected $tag = 'div';
+    protected array $props = [];
 
     /**
-     * Is the element self enclosing
-     *
-     * @var bool
+     * @var array<int,string|Tag|\Stringable>
      */
-    protected $isSelfClosing = false;
+    protected array $content = [];
 
-    /**
-     * Properties collection
-     *
-     * @var array
-     */
-    protected $props = array();
+    protected ?Tag $parent = null;
 
-    /**
-     * Content of the element.
-     * Can be a string, array, object that has __toString()
-     *
-     * @var mixed
-     */
-    protected $content = array();
-
-    /**
-     * Parent element
-     *
-     * @var Tag
-     */
-    protected $parent;
-
-    /**
-     * The tag builder.
-     * This is so we can attach children without having to construct them
-     *
-     * @var Builder
-     */
-    protected $builder;
+    protected ?Builder $builder = null;
 
     /**
      * Factory method.
@@ -78,17 +52,14 @@ class Tag
      *          ExtendedTag::factory('div', 'This is my content', ['class' => 'container']);
      *
      * @param string $tag
-     * @param array $props
-     * @param mixed $content
-     * @param Builder $builder
-     *
-     * @return Tag
+     * @param array<string,mixed> $props
+     * @param string|array<int,string|Tag|\Stringable> $content
      */
-    public static function create($tag, $props = null, $content = null, Builder $builder = null)
+    public static function create($tag, array $props = [], mixed $content = null, Builder $builder = null): Tag
     {
-        $widget = new static($props, $content, $builder);
-        if (substr($tag, - 1) === '/') {
-            $widget->tag           = substr($tag, 0, - 1);
+        $widget = new Tag($props, $content, $builder);
+        if (str_ends_with($tag, '/')) {
+            $widget->tag           = substr($tag, 0, -1);
             $widget->isSelfClosing = true;
         } else {
             $widget->tag           = $tag;
@@ -100,14 +71,10 @@ class Tag
     }
 
     /**
-     *
-     * @param array $props
-     *            Additional data for the HTML element (attributes, private data)
-     * @param mixed $content
-     *            Content of the HTML element (a string, an array)
-     * @param Builder $builder
+     * @param array<string,mixed> $props
+     * @param string|array<int,string|Tag|\Stringable> $content
      */
-    public function __construct($props = null, $content = null, Builder $builder = null)
+    public function __construct(array $props = [], mixed $content = null, Builder $builder = null)
     {
         $this->builder = $builder;
         if ($props !== null) {
@@ -119,15 +86,11 @@ class Tag
     }
 
     /**
-     * Set multipe properties to the HTML element
-     *
-     * @param array $props
-     *
-     * @return self
+     * @param array<string,mixed> $props
      */
-    public function setProps($props)
+    public function setProps(array $props): self
     {
-        if (! is_array($props) && ! ($props instanceof \Traversable)) {
+        if (!is_array($props)) {
             return $this;
         }
         foreach ($props as $name => $value) {
@@ -137,54 +100,37 @@ class Tag
         return $this;
     }
 
-    /**
-     * Set a single property to the HTML element
-     *
-     * @param string $name
-     * @param mixed $value
-     *
-     * @return Tag
-     */
-    public function set($name, $value = null)
+    public function set(string $name, mixed $value = null): static
     {
-        if (is_string($name)) {
-            $name = $this->cleanAttributeName($name);
-            if ($value === null && isset($this->props[$name])) {
-                unset($this->props[$name]);
-            } elseif ($value !== null) {
-                $this->props[$name] = $value;
-            }
+        $name = $this->cleanAttributeName($name);
+        if ($value === null && isset($this->props[$name])) {
+            unset($this->props[$name]);
+        } elseif ($value !== null) {
+            $this->props[(string)$name] = $value;
         }
 
         return $this;
     }
 
-    /**
-     * @param $name
-     *
-     * @return mixed
-     */
-    protected function cleanAttributeName($name)
+    protected function cleanAttributeName(string $name): string
     {
         // private attributes are allowed to have any form
-        if (substr($name, 0, 1) === '_') {
+        if (str_starts_with($name, '_')) {
             return $name;
         }
 
-        return preg_replace('/[^a-zA-Z0-9-]+/', '', $name);
+        return (string) preg_replace('/[^a-zA-Z0-9-]+/', '', $name);
     }
 
     /**
-     * Returns some or all of the HTML element's properties
+     * @param list<string> $list
      *
-     * @param array|null $list
-     *
-     * @return array
+     * @return array<string,mixed>
      */
-    public function getProps($list = null)
+    public function getProps(array $list = []): array
     {
-        if ($list && is_array($list)) {
-            $result = array();
+        if (!empty($list)) {
+            $result = [];
             foreach ($list as $key) {
                 $result[$key] = $this->get($key);
             }
@@ -197,60 +143,37 @@ class Tag
 
     /**
      * Returns one of HTML element's properties
-     *
-     * @param string $name
-     *
-     * @return mixed
      */
-    public function get($name)
+    public function get(string $name): mixed
     {
         $name = $this->cleanAttributeName($name);
 
-        return isset($this->props[$name]) ? $this->props[$name] : null;
+        return $this->props[$name] ?? null;
     }
 
-    /**
-     * Add a class to the element's class list
-     *
-     * @param string $class
-     *
-     * @return self
-     */
-    public function addClass($class)
+    public function addClass(string $class): self
     {
-        if (! $this->hasClass($class)) {
+        if (!$this->hasClass($class)) {
+            // @phpstan-ignore-next-line
             $this->set('class', trim((string) $this->get('class') . ' ' . $class));
         }
 
         return $this;
     }
 
-    /**
-     * Remove a class from the element's class list
-     *
-     * @param string $class
-     *
-     * @return self
-     */
-    public function removeClass($class)
+    public function removeClass(string $class): self
     {
         $classes = $this->get('class');
         if ($classes) {
-            $classes = trim(preg_replace('/(^| ){1}' . $class . '( |$){1}/i', ' ', $classes));
+            // @phpstan-ignore-next-line
+            $classes = trim((string) preg_replace('/(^| ){1}' . $class . '( |$){1}/i', ' ', (string) $classes));
             $this->set('class', $classes);
         }
 
         return $this;
     }
 
-    /**
-     * Toggles a class on the element
-     *
-     * @param string $class
-     *
-     * @return self
-     */
-    public function toggleClass($class)
+    public function toggleClass(string $class): self
     {
         if ($this->hasClass($class)) {
             return $this->removeClass($class);
@@ -259,34 +182,21 @@ class Tag
         return $this->addClass($class);
     }
 
-    /**
-     * Checks if the element has a specific class
-     *
-     * @param string $class
-     *
-     * @return boolean
-     */
-    public function hasClass($class)
+    public function hasClass(string $class): bool
     {
         $classes = $this->get('class');
 
-        return $classes && ((bool) preg_match('/(^| ){1}' . $class . '( |$){1}/i', $classes));
+        // @phpstan-ignore-next-line
+        return $classes && ((bool) preg_match('/(^| ){1}' . $class . '( |$){1}/i', (string) $classes));
     }
 
-    /**
-     * Set the content
-     *
-     * @param mixed $content
-     *
-     * @return $this
-     */
-    public function setContent($content)
+    public function setContent(mixed $content): static
     {
-        if (! $content) {
+        if (!$content) {
             return $this;
         }
-        if (! is_array($content)) {
-            $content = array( $content );
+        if (!is_array($content)) {
+            $content = [$content];
         }
         $this->clearContent();
         foreach ($content as $child) {
@@ -313,31 +223,32 @@ class Tag
      */
     public function clearContent()
     {
-        $this->content = array();
+        $this->content = [];
 
         return $this;
     }
 
     /**
-     * @param $tagTextOrArray
-     *
-     * @return self
+     * @param string|Tag|array<int,mixed>$tagTextOrArray
      */
-    protected function addChild($tagTextOrArray)
+    protected function addChild($tagTextOrArray): self
     {
         // a list of arguments to be passed to builder->make()
-        if (is_array($tagTextOrArray) && ! empty($tagTextOrArray)) {
-            if (! isset($this->builder)) {
+        if (is_array($tagTextOrArray) && !empty($tagTextOrArray)) {
+            if (!isset($this->builder)) {
                 throw new \InvalidArgumentException(sprintf('Builder not attached to tag `%s`', $this->tag));
             }
 
-            $tagName        = $tagTextOrArray[0];
-            $props          = isset($tagTextOrArray[1]) ? $tagTextOrArray[1] : [ ];
-            $content        = isset($tagTextOrArray[2]) ? $tagTextOrArray[2] : [ ];
+            // @phpstan-ignore-next-line
+            $tagName        = (string) $tagTextOrArray[0];
+            $props          = (array) ($tagTextOrArray[1] ?? [ ]);
+            $content        = (array) ($tagTextOrArray[2] ?? [ ]);
+            // @phpstan-ignore-next-line
             $tagTextOrArray = $this->builder->make($tagName, $props, $content);
         }
 
-        array_push($this->content, $tagTextOrArray);
+        /** @var string|\Stringable|Tag $tagTextOrArray */
+        $this->content[] = $tagTextOrArray;
 
         return $this;
     }
@@ -345,15 +256,13 @@ class Tag
     /**
      * Return the attributes as a string for HTML output
      * example: title="Click here to delete" class="remove"
-     *
-     * @return string
      */
-    protected function getAttributesString()
+    protected function getAttributesString(): string
     {
         $result = '';
         ksort($this->props);
         foreach ($this->props as $k => $v) {
-            if (substr($k, 0, 1) !== '_') {
+            if (!str_starts_with($k, '_')) {
                 if ($v === true) {
                     $result .= $k . ' ';
                 } else {
@@ -368,13 +277,9 @@ class Tag
         return $result;
     }
 
-    /**
-     * @param $attr
-     *
-     * @return string
-     */
-    protected function escapeAttr($attr)
+    protected function escapeAttr(mixed $attr): string
     {
+        // @phpstan-ignore-next-line
         $attr = (string) $attr;
 
         if (0 === strlen($attr)) {
@@ -382,7 +287,7 @@ class Tag
         }
 
         // Don't bother if there are no specialchars - saves some processing
-        if (! preg_match('/[&<>"\']/', $attr)) {
+        if (!preg_match('/[&<>"\']/', $attr)) {
             return $attr;
         }
 
@@ -417,7 +322,7 @@ class Tag
         return implode(PHP_EOL, $this->content);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Sirius\Html\Tag;
 
 class File extends Input

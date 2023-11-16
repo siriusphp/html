@@ -1,14 +1,15 @@
 <?php
+
 namespace Sirius\Html\Tag;
 
 class Textarea extends Input
 {
-    protected $tag = 'textarea';
+    protected string $tag = 'textarea';
 
-    protected $isSelfClosing = false;
+    protected bool $isSelfClosing = false;
 
-    public function getInnerHtml()
+    public function getInnerHtml(): string
     {
-        return $this->getValue();
+        return $this->getValue(); // @phpstan-ignore-line
     }
 }

@@ -1,28 +1,21 @@
 <?php
-namespace Sirius\Html\Tag;
 
-class TextTest extends \PHPUnit_Framework_TestCase
-{
+use \Sirius\Html\Tag\Text;
 
-    function setUp()
-    {
-        $this->input = new Text(array(
-            'name'     => 'username',
-            'disabled' => true,
-            'class'    => 'not-valid'
-        ), 'siriusforms');
-    }
+beforeEach(function () {
+    $this->input = new Text(array(
+        'name'     => 'username',
+        'disabled' => true,
+        'class'    => 'not-valid'
+    ), 'siriusforms');
+});
 
-    function testAttributes()
-    {
-        $this->assertEquals('siriusforms', $this->input->getValue());
-        $this->assertEquals('username', $this->input->get('name'));
-        $this->assertTrue($this->input->hasClass('not-valid'));
-    }
+test('attributes', function () {
+    expect($this->input->getValue())->toEqual('siriusforms');
+    expect($this->input->get('name'))->toEqual('username');
+    expect($this->input->hasClass('not-valid'))->toBeTrue();
+});
 
-    function testRender()
-    {
-        $this->assertEquals('<input class="not-valid" disabled name="username" value="siriusforms" />',
-            (string) $this->input);
-    }
-}
+test('render', function () {
+    expect((string) $this->input)->toEqual('<input class="not-valid" disabled name="username" value="siriusforms" />');
+});

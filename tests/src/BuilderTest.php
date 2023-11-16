@@ -1,111 +1,99 @@
 <?php
-namespace Sirius\Html;
 
-class BuilderTest extends \PHPUnit_Framework_TestCase
-{
-    /**
-     * @var Builder
-     */
-    protected $builder;
+use \Sirius\Html\Tag;
+use \Sirius\Html\Builder;
+use Tests\TestCase;
 
-    function setUp()
-    {
-        $this->builder = new Builder();
+uses(TestCase::class);
 
-        $this->builder->registerTag('some-tag', function ($content = null, $props = null, $builder) {
-            return Tag::create('other-tag', $content, $props, $builder);
-        });
-    }
+beforeEach(function () {
+    $this->builder = new Builder();
 
-    function testCustomTag()
-    {
-        $this->assertEquals('<other-tag>Content</other-tag>', $this->builder->make('some-tag', array(), 'Content')
-                                                                            ->render());
-    }
+    $this->builder->registerTag('some-tag', function ($content = null, $props = null, $builder = null) {
+        return Tag::create('other-tag', $content, $props, $builder);
+    });
+});
 
-    function testMagicCall()
-    {
-        $this->assertEquals('<other-tag>Content</other-tag>', $this->builder->someTag(array(), 'Content')
-                                                                            ->render());
-    }
+test('custom tag', function () {
+    expect($this->builder->make('some-tag', array(), 'Content')
+                                                                        ->render())->toEqual('<other-tag>Content</other-tag>');
+});
 
-    function testRegisteredTag()
-    {
-        $this->assertEquals('<img src="some/file.jpg" />', $this->builder->img(array(
-            'src' => 'some/file.jpg'
-        )));
-    }
+test('magic call', function () {
+    expect($this->builder->someTag(array(), 'Content')
+                                                                        ->render())->toEqual('<other-tag>Content</other-tag>');
+});
 
-    function testNonRegisteredTag()
-    {
-        $this->assertEquals('<hr class="separator" />', $this->builder->make('hr/', array(
-            'class' => 'separator'
-        )));
-    }
+test('registered tag', function () {
+    expect((string) $this->builder->img(array(
+        'src' => 'some/file.jpg'
+    )))->toEqual('<img src="some/file.jpg" />');
+});
 
-    function testExceptionThrownForInvalidFactories()
-    {
-        $this->setExpectedException('InvalidArgumentException');
-        $this->builder->registerTag('exception', function () {
-            return '';
-        });
-        $this->builder->make('exception');
-    }
+test('non registered tag', function () {
+    expect($this->builder->make('hr/', array(
+        'class' => 'separator'
+    )))->toEqual('<hr class="separator" />');
+});
 
-    function testComplexScenario()
-    {
-        $html         = $this->builder->make('form', array(
-            'id'    => 'user-add',
-            'class' => 'form-horizontal'
-        ), array(
+test('exception thrown for invalid factories', function () {
+    $this->expectException('InvalidArgumentException');
+    $this->builder->registerTag('exception', function () {
+        return '';
+    });
+    $this->builder->make('exception');
+});
+
+test('complex scenario', function () {
+    $html         = $this->builder->make('form', array(
+        'id'    => 'user-add',
+        'class' => 'form-horizontal'
+    ), array(
+        array(
+            'div',
             array(
-                'div',
+                'class' => 'form-control'
+            ),
+            array(
                 array(
-                    'class' => 'form-control'
+                    'label',
+                    array(),
+                    'Username'
                 ),
                 array(
+                    'input',
                     array(
-                        'label',
-                        array(),
-                        'Username'
+                        'type' => 'text'
                     ),
+                    'my_username'
+                ),
+                array(
+                    'div',
                     array(
-                        'input',
-                        array(
-                            'type' => 'text'
-                        ),
-                        'my_username'
+                        'class' => 'form-help'
                     ),
-                    array(
-                        'div',
-                        array(
-                            'class' => 'form-help'
-                        ),
-                        'Enter your desired username'
-                    )
+                    'Enter your desired username'
                 )
             )
+        )
 
-        ));
-        $renderedHtml = $html->render();
-        $this->assertTrue(strpos($renderedHtml, '<div class="form-help">') !== false);
-        $this->assertTrue(strpos($renderedHtml, '<label>Username') !== false);
-        $this->assertTrue(strpos($renderedHtml, '<input type="text">') !== false);
-    }
+    ));
+    $renderedHtml = $html->render();
+    expect(strpos($renderedHtml, '<div class="form-help">') !== false)->toBeTrue();
+    expect(strpos($renderedHtml, '<label>Username') !== false)->toBeTrue();
+    expect(strpos($renderedHtml, '<input type="text">') !== false)->toBeTrue();
+});
 
-    function testOptions()
-    {
-        $this->assertNull($this->builder->getOption('use_bootstrap'));
-        $this->builder->setOption('use_bootstrap', true);
-        $this->assertTrue($this->builder->getOption('use_bootstrap'));
-    }
+test('options', function () {
+    expect($this->builder->getOption('use_bootstrap'))->toBeNull();
+    $this->builder->setOption('use_bootstrap', true);
+    expect($this->builder->getOption('use_bootstrap'))->toBeTrue();
+});
 
-    function testWith()
-    {
-        $this->assertNull($this->builder->getOption('use_bootstrap'));
-        $newBuilder = $this->builder->with(array( 'use_bootstrap' => true ));
+test('with', function () {
+    expect($this->builder->getOption('use_bootstrap'))->toBeNull();
+    $newBuilder = $this->builder->with(array( 'use_bootstrap' => true ));
 
-        $this->assertNotEquals($this->builder, $newBuilder);
-        $this->assertTrue($newBuilder->getOption('use_bootstrap'));
-    }
-}
+    $this->assertNotEquals($this->builder, $newBuilder);
+    expect($newBuilder->getOption('use_bootstrap'))->toBeTrue();
+});

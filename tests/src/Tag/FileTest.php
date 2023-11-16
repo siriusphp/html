@@ -1,19 +1,14 @@
 <?php
-namespace Sirius\Html\Tag;
 
-class FileTest extends \PHPUnit_Framework_TestCase
-{
+use \Sirius\Html\Tag\File;
 
-    function setUp()
-    {
-        $this->input = new File(array(
-            'name'  => 'picture',
-            'class' => 'upload'
-        ));
-    }
+beforeEach(function () {
+    $this->input = new File(array(
+        'name'  => 'picture',
+        'class' => 'upload'
+    ));
+});
 
-    function testRender()
-    {
-        $this->assertEquals('<input class="upload" name="picture" type="file" />', (string) $this->input);
-    }
-}
+test('render', function () {
+    expect((string) $this->input)->toEqual('<input class="upload" name="picture" type="file" />');
+});
